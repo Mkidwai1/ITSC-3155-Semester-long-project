@@ -107,9 +107,10 @@ def canvas_calendar():
     calendar_events = fetch_canvas_calendar_events(user.id, course_codes)
     print("Calendar events in route:", calendar_events)  
     return render_template('canvas_calendar.html', events=calendar_events)
+import requests
 
 def fetch_canvas_calendar_events(user_id, course_codes):
-    user_instance = User.query.get(user_id)
+    user_instance = db.session.get(User, user_id)
     if not user_instance:
         flash('User not found.')
         return []
@@ -118,34 +119,58 @@ def fetch_canvas_calendar_events(user_id, course_codes):
         flash("Canvas API key is missing.")
         return []
 
-    headers = {
-        'Authorization': f'Bearer {user_instance.canvas_api_key}'
-    }
+    headers = {'Authorization': f'Bearer {user_instance.canvas_api_key}'}
 
-    all_events = []
+    all_items = []  # This will include both events and assignments
 
+    # Fetch events
     for code in course_codes:
         context_code = f'course_{code}'
         params = {
-            'type': 'event',
             'context_codes[]': context_code,
             'start_date': '2024-03-01',
             'end_date': '2024-03-31'
         }
 
-        events_response = requests.get(
-            f'{CANVAS_INSTANCE_URL}/api/v1/calendar_events',
-            headers=headers,
-            params=params
-        )
-
-        if events_response.status_code == 200:
+        try:
+            events_response = requests.get(
+                f'{CANVAS_INSTANCE_URL}/api/v1/calendar_events',
+                headers=headers,
+                params=params
+            )
+            events_response.raise_for_status()
             events = events_response.json()
-            all_events.extend(events)
-        else:
-            flash(f'Failed to fetch events for course {code}: {events_response.reason}')
+            all_items.extend(events)  # Add events to all_items
+        except requests.RequestException as e:
+            flash(f'Failed to fetch events for course {code}: {str(e)}')
 
-    return all_events
+    # Fetch assignments for each course and treat them as calendar events
+    for code in course_codes:
+        try:
+            assignments_response = requests.get(
+                f'{CANVAS_INSTANCE_URL}/api/v1/courses/{code}/assignments',
+                headers=headers,
+                params={'start_date': '2024-03-01', 'end_date': '2024-03-31', 'per_page': 100}
+            )
+            assignments_response.raise_for_status()
+            assignments = assignments_response.json()
+
+            for assignment in assignments:
+                # Convert assignment to a calendar event-like structure if necessary
+                assignment_event = {
+                    'title': assignment['name'],
+                    'start_at': assignment['due_at'],
+                    'description': assignment.get('description', 'No description'),
+                    'url': assignment['html_url'],
+                    'type': 'assignment'
+                }
+                all_items.append(assignment_event)
+
+        except requests.RequestException as e:
+            flash(f'Failed to fetch assignments for course {code}: {str(e)}')
+
+    return all_items
+
 
 if __name__ == '__main__':
     app.run(debug=True)
