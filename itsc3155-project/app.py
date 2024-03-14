@@ -128,8 +128,6 @@ def fetch_canvas_calendar_events(user_id, course_codes):
         context_code = f'course_{code}'
         params = {
             'context_codes[]': context_code,
-            'start_date': '2024-03-01',
-            'end_date': '2024-03-31'
         }
 
         try:
