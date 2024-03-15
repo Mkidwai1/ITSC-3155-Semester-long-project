@@ -167,9 +167,6 @@ def fetch_canvas_calendar_events(user_id, course_codes):
     return all_items
 
 
-if __name__ == '__main__':
-    app.run(debug=True)
-
 @app.route('/todo')
 def todo():
     return render_template('todo.html')
@@ -188,3 +185,10 @@ def logout():
     session.pop('name', None)   # Remove user name from session
     flash('You have been logged out.')
     return redirect(url_for('index'))
+
+
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
