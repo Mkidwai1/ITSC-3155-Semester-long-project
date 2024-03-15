@@ -57,13 +57,14 @@
             {% endwith %}
             <!-- End Flash Messages Section -->
 
-            <form action="/dashboard" method="POST" class="mt-3">
-                <div class="form-group">
-                    <label for="courseCodes">Enter Course Codes (comma-separated):</label>
-                    <input type="text" class="form-control" id="courseCodes" name="course_codes" required>
-                </div>
-                <button type="submit" class="btn btn-success">Update Course Codes</button>
-            </form>
+<form action="/dashboard" method="POST" class="mt-3">
+    <div class="form-group">
+        <label for="courseCodes">Enter Course Codes (comma-separated):</label>
+        <input type="text" class="form-control" id="courseCodes" name="course_codes" required placeholder="Input Example: 123456, 789101, 121314">
+    </div>
+    <button type="submit" class="btn btn-success">Update Course Codes</button>
+</form>
+
         </div>
     </div>
 </div>
