@@ -66,6 +66,7 @@ def login():
         
         if user and user.check_password(password):
             session['email'] = user.email
+            session['user_name'] = user.name
             return redirect(url_for('dashboard'))
         else:
             flash('Invalid Email or Password. Please try again.')
@@ -86,10 +87,6 @@ def dashboard():
 
         return render_template('dashboard.html', user=user)
     
-    return redirect(url_for('login'))
-@app.route('/logout')
-def logout():
-    session.pop('email', None)
     return redirect(url_for('login'))
 
 @app.route('/canvas-calendar')
@@ -149,3 +146,22 @@ def fetch_canvas_calendar_events(user_id, course_codes):
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+@app.route('/todo')
+def todo():
+    return render_template('todo.html')
+
+@app.route('/shop')
+def shop():
+    return render_template('shop.html')
+
+@app.route('/settings')
+def settings():
+    return render_template('settings.html')
+
+@app.route('/logout')
+def logout():
+    session.pop('email', None)  # Remove user email from session
+    session.pop('name', None)   # Remove user name from session
+    flash('You have been logged out.')
+    return redirect(url_for('index'))
