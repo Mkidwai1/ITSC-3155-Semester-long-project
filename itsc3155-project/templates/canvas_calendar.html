@@ -1,15 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Canvas Calendar</title>
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <title>Canvas Calendar</title>
+        <link rel="stylesheet" href="/static/css/styles.css">
+        <!--FullCalendar-->
+        <!-- Include FullCalendar CSS -->
+        <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.0/main.min.css' rel='stylesheet' />
+
+        <!-- Include FullCalendar premium script -->
+        <script src='https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@6.1.11/index.global.min.js'></script>
+
+     
+        <!-- Bootstrap CSS -->
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Bootstrap JS, Popper.js, and jQuery -->
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    </head>
+    
+
 <body>
-    <h1>Canvas Calendar Events</h1>
+    
+
+    
+      <!-- Event Details Modal -->
+<div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="eventModalLabel">Event Details</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <form id="eventForm">
+                <div class="form-group">
+                  <label for="eventType">Event Type</label>
+                  <select class="form-control" id="eventType">
+                    <option value="homework">Homework</option>
+                    <option value="class">Class</option>
+                    <option value="project">Project</option>
+                    <option value="meeting">Meeting</option>
+                  </select>
+                </div>
+                <div class="form-group" id="dateGroup">
+                  <label for="dueDate">Date</label>
+                  <input type="date" class="form-control" id="dueDate">
+                </div>
+                <div class="form-group" id="timeGroup">
+                  <label for="eventTime">Time</label>
+                  <input type="time" class="form-control" id="eventTime">
+                </div>
+                <div class="form-group" id="locationGroup">
+                  <label for="eventLocation">Location</label>
+                  <input type="text" class="form-control" id="eventLocation">
+                </div>
+                <div class="form-group" id="classGroup">
+                  <label for="eventClass">Class</label>
+                  <select class="form-control" id="eventClass">
+                    
+                    <option value="class1">Class 1</option>
+                    <option value="class2">Class 2</option>
+                  </select>
+                </div>
+              </form>
+              
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="saveEvent">Save Event</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div id="calendar"></div>
+</div>
     <ul>
         {% for event in events %}
             <li>{{ event['title'] }} - Starts at: {{ event['start_at'] }}</li>
         {% endfor %}
     </ul>
+    
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
