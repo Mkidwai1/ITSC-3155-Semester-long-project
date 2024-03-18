@@ -1,10 +1,18 @@
 from flask import Flask, request, render_template, redirect, session, flash, url_for 
 from flask_sqlalchemy import SQLAlchemy
+from flask_mail import Mail, Message
 import bcrypt
-import requests
+from random import randint
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config["MAIL_SERVER"]='smtp.gmail.com'
+app.config["MAIL_PORT"]=465
+app.config["MAIL_USERNAME"]='noreply.progresspixel@gmail.com'  # Use environment variables for sensitive info
+app.config['MAIL_PASSWORD']='yhue qgef inkn ctwg'  # Use environment variables
+app.config['MAIL_USE_TLS']=False
+app.config['MAIL_USE_SSL']=True
+mail=Mail(app)
 db = SQLAlchemy(app)
 app.secret_key = 'itis3155proj'
 
@@ -190,26 +198,43 @@ def logout():
 def forgot():
     if request.method == 'POST':
         email = request.form.get('email')
-        canvas_api_key = request.form.get('canvas_api_key')
-        
-        # First, check if a user with the given email exists
         user = User.query.filter_by(email=email).first()
-        
         if user:
-            # If the user exists, then check if the Canvas API key matches
-            if user.canvas_api_key == canvas_api_key:
-                # Proceed with the reset logic, for example, deleting the user and prompting to re-register
-                db.session.delete(user)
-                db.session.commit()
-                flash('Your account has been reset. Please register again.', 'info')
-                return redirect(url_for('register'))
-            else:
-                # If the Canvas API key doesn't match, flash a specific message
-                flash('Wrong API key used. Please try again.', 'warning')
+            otp = randint(000000,999999)
+            session['otp'] = otp
+            session['email_for_otp'] = email  # Save email in session to use in the validation step
+            
+            msg = Message(subject='OTP for Password Reset', sender='your_email@example.com', recipients=[email])
+            msg.body = f'Your OTP is {otp}'
+            mail.send(msg)
+            
+            flash('An OTP has been sent to your email. Please check to verify.')
+            return redirect(url_for('verify_otp'))
         else:
-            # If no user with the given email is found, flash a general error message
             flash('No matching account found. Please check your details.', 'warning')
     return render_template('forgot.html')
+
+@app.route('/verify_otp', methods=['GET', 'POST'])
+def verify_otp():
+    if request.method == 'POST':
+        user_otp = request.form['otp']
+        if 'otp' in session and int(user_otp) == session['otp']:
+            email = session.pop('email_for_otp', None)
+            session.pop('otp', None)  # Clear the OTP from the session
+            
+            user = User.query.filter_by(email=email).first()
+            if user:
+                db.session.delete(user)
+                db.session.commit()
+                flash('OTP verified. Your account has been reset. Please register again.', 'success')
+                return redirect(url_for('register'))
+            else:
+                flash('Session error. Please try the reset process again.', 'danger')
+                return redirect(url_for('forgot'))
+        else:
+            flash('Invalid OTP. Please try again.')
+            return render_template('verify_otp.html')
+    return render_template('verify_otp.html')
 
 
 
