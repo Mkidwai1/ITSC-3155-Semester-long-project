@@ -1,3 +1,4 @@
+<<<<<<< HEAD:itsc3155-project/templates/canvas_calendar.html
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -90,3 +91,19 @@
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas Calendar</title>
+</head>
+<body>
+    <h1>Canvas Calendar Events</h1>
+    <ul>
+        {% for event in events %}
+            <li>{{ event['title'] }} - Starts at: {{ event['start_at'] }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
+>>>>>>> ca6cfd737b8af480d8933679ec6b6b3036193d98:templates/canvas_calendar.html
