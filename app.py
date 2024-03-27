@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
 import bcrypt
 from random import randint
+from datetime import date, timedelta
 
 
 app = Flask(__name__)
@@ -207,7 +208,16 @@ def update_avatar():
 
 @app.route('/todo')
 def todo():
-    return render_template('todo.html')
+    user = User.query.filter_by(email=session['email']).first()
+    course_codes = user.course_codes_list.split(',') if user.course_codes_list else []
+    calendar_events = fetch_canvas_calendar_events(user.id, course_codes)
+    todoList = [];
+    for events in calendar_events:
+        if(str(events['start_at'])[0:10] == str(date.today() + timedelta(days=1))[0:10]):
+            todoList.append(str(events['title']))
+
+
+    return render_template('todo.html', assignments = todoList)
 
 @app.route('/shop')
 def shop():
