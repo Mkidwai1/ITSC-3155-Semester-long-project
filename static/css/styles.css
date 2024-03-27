@@ -1,5 +1,6 @@
 /*<<<<<<< HEAD:itsc3155-project/static/css/styles.css*/
-body, html {
+body,
+html {
     height: 100%;
     margin: 0;
     padding: 0;
@@ -11,9 +12,11 @@ body, html {
     position: fixed;
     left: 0;
     right: 0;
-    z-index: -1; /* Ensure the image stays in the background */
+    z-index: -1;
+    /* Ensure the image stays in the background */
     display: block;
-    background-image: url('images/uncc.png'); /* Adjust path as needed */
+    background-image: url('images/uncc.png');
+    /* Adjust path as needed */
     background-size: cover;
     background-position: center;
     width: 100%;
@@ -23,18 +26,20 @@ body, html {
 
 @keyframes fadeInTextBackground {
     0% {
-      background-color: rgba(255, 255, 255, 0);
-      color: #000;
+        background-color: rgba(255, 255, 255, 0);
+        color: #000;
     }
+
     100% {
-      background-color: rgba(255, 255, 255, 0.75);
-      color: #333;
+        background-color: rgba(255, 255, 255, 0.75);
+        color: #333;
     }
-  }
-  
+}
+
 
 /* Reset margins and padding */
-body, html {
+body,
+html {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
@@ -122,7 +127,8 @@ header h1 {
 
 /* Assignments container styling */
 .assignments-container {
-    width: 30%; /* Adjust size as needed */
+    width: 30%;
+    /* Adjust size as needed */
 }
 
 .assignment-box {
@@ -135,7 +141,8 @@ header h1 {
 
 /* Hub button container */
 .hub-container {
-    text-align: center; /* Center the button */
+    text-align: center;
+    /* Center the button */
     flex-grow: 1;
 }
 
@@ -151,7 +158,8 @@ header h1 {
 
 /* Avatar container */
 .avatar-container {
-    width: 30%; /* Adjust size as needed */
+    width: 30%;
+    /* Adjust size as needed */
     text-align: right;
 }
 
@@ -161,8 +169,15 @@ header h1 {
 
 /* Simple wave animation */
 @keyframes wave-animation {
-    0%, 100% { transform: rotate(0deg); }
-    50% { transform: rotate(10deg); }
+
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+
+    50% {
+        transform: rotate(10deg);
+    }
 }
 
 
@@ -299,24 +314,25 @@ header h1 {
 
 .welcome-container {
     text-align: center;
-    max-width: 800px; 
-    margin: 50px auto; 
-    padding: 40px; 
-    background-color: rgba(255, 255, 255, 0.85); 
-    border-radius: 10px; 
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
-    transition: background-color 0.3s ease; 
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 40px;
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
 }
 
 /* Enhanced readability for text inside the container */
-.welcome-container h2, .welcome-container p {
-    margin: 20px 0; 
-    color: #333; 
+.welcome-container h2,
+.welcome-container p {
+    margin: 20px 0;
+    color: #333;
 }
 
 /* Add a hover effect to the container for interactive feedback */
 .welcome-container:hover {
-    background-color: rgba(255, 255, 255, 1); 
+    background-color: rgba(255, 255, 255, 1);
 }
 
 
@@ -344,7 +360,8 @@ header h1 {
 
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f7; /* Light gray background */
+    background-color: #f4f4f7;
+    /* Light gray background */
     margin: 0;
     padding: 0;
 }
@@ -354,22 +371,31 @@ body {
     margin: 40px auto;
     align-self: center;
 }
+
 #calendar-container {
-    max-width: 1000px; /* Max width of the calendar */
-    margin: 40px auto; /* Center the calendar with margin */
+    max-width: 1000px;
+    /* Max width of the calendar */
+    margin: 40px auto;
+    /* Center the calendar with margin */
     padding: 15px;
-    background-color: #ffffff; /* White background for the calendar */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Adding a subtle shadow */
-    border-radius: 8px; /* Rounded corners */
+    background-color: #ffffff;
+    /* White background for the calendar */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Adding a subtle shadow */
+    border-radius: 8px;
+    /* Rounded corners */
 }
 
 .fc-toolbar-title {
-    font-size: 24px; /* Larger font size for the calendar title */
-    color: #333333; /* Darker font color for better readability */
+    font-size: 24px;
+    /* Larger font size for the calendar title */
+    color: #333333;
+    /* Darker font color for better readability */
 }
 
 .fc-button {
-    background-color: #4CAF50; /* Green background for buttons */
+    background-color: #4CAF50;
+    /* Green background for buttons */
     color: white;
     border: none;
     padding: 10px 15px;
@@ -379,28 +405,35 @@ body {
 }
 
 .fc-button:hover {
-    background-color: #45a049; /* Darker green on hover */
+    background-color: #45a049;
+    /* Darker green on hover */
 }
 
 .fc-button.fc-button-primary {
-    background-color: #007bff; /* Bootstrap primary color for primary buttons */
+    background-color: #007bff;
+    /* Bootstrap primary color for primary buttons */
 }
 
 .fc-button.fc-button-primary:hover {
-    background-color: #0069d9; /* Darker blue on hover */
+    background-color: #0069d9;
+    /* Darker blue on hover */
 }
 
-.fc-event, .fc-event-dot {
-    background-color: #ff5722; /* A different color for events */
+.fc-event,
+.fc-event-dot {
+    background-color: #ff5722;
+    /* A different color for events */
     border: none;
 }
 
 .fc-event-title {
-    color: #ffffff; /* White text color for event titles */
+    color: #ffffff;
+    /* White text color for event titles */
 }
 
 
-body, html {
+body,
+html {
     height: 100%;
     margin: 0;
     padding: 0;
@@ -412,9 +445,11 @@ body, html {
     position: fixed;
     left: 0;
     right: 0;
-    z-index: -1; /* Ensure the image stays in the background */
+    z-index: -1;
+    /* Ensure the image stays in the background */
     display: block;
-    background-image: url('images/uncc.png'); /* Adjust path as needed */
+    background-image: url('images/uncc.png');
+    /* Adjust path as needed */
     background-size: cover;
     background-position: center;
     width: 100%;
@@ -424,18 +459,20 @@ body, html {
 
 @keyframes fadeInTextBackground {
     0% {
-      background-color: rgba(255, 255, 255, 0);
-      color: #000;
+        background-color: rgba(255, 255, 255, 0);
+        color: #000;
     }
+
     100% {
-      background-color: rgba(255, 255, 255, 0.75);
-      color: #333;
+        background-color: rgba(255, 255, 255, 0.75);
+        color: #333;
     }
-  }
-  
+}
+
 
 /* Reset margins and padding */
-body, html {
+body,
+html {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
@@ -523,7 +560,8 @@ header h1 {
 
 /* Assignments container styling */
 .assignments-container {
-    width: 30%; /* Adjust size as needed */
+    width: 30%;
+    /* Adjust size as needed */
 }
 
 .assignment-box {
@@ -536,7 +574,8 @@ header h1 {
 
 /* Hub button container */
 .hub-container {
-    text-align: center; /* Center the button */
+    text-align: center;
+    /* Center the button */
     flex-grow: 1;
 }
 
@@ -552,7 +591,8 @@ header h1 {
 
 /* Avatar container */
 .avatar-container {
-    width: 30%; /* Adjust size as needed */
+    width: 30%;
+    /* Adjust size as needed */
     text-align: right;
 }
 
@@ -562,8 +602,15 @@ header h1 {
 
 /* Simple wave animation */
 @keyframes wave-animation {
-    0%, 100% { transform: rotate(0deg); }
-    50% { transform: rotate(10deg); }
+
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+
+    50% {
+        transform: rotate(10deg);
+    }
 }
 
 
@@ -700,24 +747,25 @@ header h1 {
 
 .welcome-container {
     text-align: center;
-    max-width: 800px; 
-    margin: 50px auto; 
-    padding: 40px; 
-    background-color: rgba(255, 255, 255, 0.85); 
-    border-radius: 10px; 
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
-    transition: background-color 0.3s ease; 
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 40px;
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
 }
 
 /* Enhanced readability for text inside the container */
-.welcome-container h2, .welcome-container p {
-    margin: 20px 0; 
-    color: #333; 
+.welcome-container h2,
+.welcome-container p {
+    margin: 20px 0;
+    color: #333;
 }
 
 /* Add a hover effect to the container for interactive feedback */
 .welcome-container:hover {
-    background-color: rgba(255, 255, 255, 1); 
+    background-color: rgba(255, 255, 255, 1);
 }
 
 
@@ -740,4 +788,100 @@ header h1 {
 .action-buttons button:hover {
     opacity: 0.9;
 }
-/*>>>>>>> ca6cfd737b8af480d8933679ec6b6b3036193d98:static/css/styles.css*/
+
+/* Avatar selection CSS */
+.avatar-selection .avatars {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    /* Ensures responsiveness */
+    gap: 20px;
+    /* Adds space between avatars */
+    margin-top: 10px;
+    /* Space below the "Choose Your Avatar:" text */
+}
+
+.avatar-selection label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    margin: 10px;
+    /* Add some space around each avatar */
+}
+
+.avatar-selection label img {
+    width: 200px;
+    /* Adjusted size */
+    height: auto;
+    /* Maintain aspect ratio */
+    border: 2px solid transparent;
+    /* Hide border by default */
+    border-radius: 50%;
+    /* Optional: Rounds the corners of the images */
+    transition: all 0.3s ease;
+    /* Smooth transition for border and scale */
+}
+
+.avatar-selection input[type="radio"] {
+    display: none;
+    /* Hide radio buttons */
+}
+
+.avatar-selection input[type="radio"]:checked + img {
+    border-color: green;
+    /* Border color for selected avatar */
+    transform: scale(1.1);
+    /* Optional: Slightly enlarge selected avatar */
+}
+
+/* Ensure the main layout is a flex container */
+.shop-layout {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch; /* Make items of equal height */
+    margin-top: 20px;
+}
+
+.tabs-container {
+    flex: 1;
+    width: 50%; /* Tabs container takes up half the width */
+}
+
+.shop-item img {
+    height: 100px; /* Example size, adjust as needed */
+    width: auto; /* Maintain aspect ratio */
+}
+
+.shop-item p img {
+    height: auto; /* Revert to default for coin images */
+    width: auto;  /* Maintain aspect ratio for coin images */
+}
+.user-avatar-large {
+    flex: 1;
+    width: 50%; /* Each takes up half of the container's width */
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Center content for better aesthetics */
+}
+
+.shop-grid {
+    padding-right: 15px; /* Add some spacing between the two columns */
+}
+
+/* Optional: Additional styling for tabs to enhance their appearance */
+.nav-tabs .nav-link.active {
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+/* Resets the border style for the selected avatar, if previously styled */
+.user-avatar-large img {
+    width: auto; /* Adjust based on the aspect ratio of your images */
+    height: 90vh; /* Adjust the height to be less than the viewport to ensure it fits */
+    object-fit: contain; /* This will make sure the entire avatar is visible */
+    margin: 5vh auto; /* Add some margin to the top and bottom */
+    display: block; /* Ensure the image is a block-level element to center it */
+    max-width: 100%; /* Ensure it does not overflow its container */
+}

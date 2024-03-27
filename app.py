@@ -1,8 +1,10 @@
-from flask import Flask, request, render_template, redirect, session, flash, url_for 
+from flask import Flask, request, render_template, redirect, session, flash, url_for
+from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
 import bcrypt
 from random import randint
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
@@ -14,6 +16,7 @@ app.config['MAIL_USE_TLS']=False
 app.config['MAIL_USE_SSL']=True
 mail=Mail(app)
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 app.secret_key = 'itis3155proj'
 
 # Define your Canvas instance URL here
@@ -26,12 +29,14 @@ class User(db.Model):
     password = db.Column(db.String(100))
     canvas_api_key = db.Column(db.String(255))
     course_codes_list = db.Column(db.String(255))  # New field for storing course codes
+    avatar = db.Column(db.String(255))
 
-    def __init__(self, email, password, name, canvas_api_key):
+    def __init__(self, email, password, name, canvas_api_key, avatar):
         self.name = name
         self.email = email
         self.password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         self.canvas_api_key = canvas_api_key
+        self.avatar = avatar
 
     def check_password(self, password):
         return bcrypt.checkpw(password.encode('utf-8'), self.password.encode('utf-8'))
@@ -46,17 +51,21 @@ def index():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
+        # Retrieve form data
         name = request.form.get('name')
         email = request.form.get('email')
         password = request.form.get('password')
-        canvas_api_key = request.form.get('canvas_api_key')  
-
+        canvas_api_key = request.form.get('canvas_api_key')
+        avatar = request.form.get('avatar', 'pixelBoy.png')  # Set default avatar if none selected
+        
+        # Check if user already exists
         existing_user = User.query.filter_by(email=email).first()
         if existing_user:
-            flash('An account with this email already exists. If this was you, please log in.')
+            flash('An account with this email already exists. Please log in.')
             return redirect(url_for('register'))
 
-        new_user = User(email=email, password=password, name=name, canvas_api_key=canvas_api_key)
+        # Create new user with either selected avatar or default
+        new_user = User(email=email, password=password, name=name, canvas_api_key=canvas_api_key, avatar=avatar)
         db.session.add(new_user)
         db.session.commit()
         flash('Registration successful. Please log in.')
@@ -64,24 +73,23 @@ def register():
 
     return render_template('register.html')
 
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
-
-        user = User.query.filter_by(email=email).first()
-        
-        if user and user.check_password(password):
+        # Logic to authenticate the user
+        user = User.query.filter_by(email=request.form.get('email')).first()
+        if user and user.check_password(request.form.get('password')):
             session['email'] = user.email
             session['user_name'] = user.name
+            session['user_avatar'] = user.avatar if user.avatar else 'pixelBoy.png' # Assuming user.avatar stores the filename
             return redirect(url_for('dashboard'))
         else:
             flash('Invalid Email or Password. Please try again.')
-            
     return render_template('login.html')
-@app.route('/dashboard', methods=['GET', 'POST'])
-def dashboard():
+
+@app.route('/settings', methods=['GET', 'POST'])
+def settings():
     if 'email' in session:
         user = User.query.filter_by(email=session['email']).first()
         
@@ -93,7 +101,7 @@ def dashboard():
             flash('Course codes updated successfully. You can now view your Canvas calendar.', 'success')  # Modified to include additional instruction
             return redirect(url_for('dashboard'))  # Redirect back to the dashboard to show the flash message
 
-        return render_template('dashboard.html', user=user)
+        return render_template('settings.html', user=user)
     
     return redirect(url_for('login'))
 
@@ -175,17 +183,70 @@ def fetch_canvas_calendar_events(user_id, course_codes):
     return all_items
 
 
+#changing/customizing avatar to be implemented
+@app.route('/update_avatar', methods=['POST'])
+def update_avatar():
+    if 'email' not in session:
+        flash("Please log in to update your avatar.")
+        return redirect(url_for('login'))
+
+    user = User.query.filter_by(email=session['email']).first()
+    if not user:
+        flash("User not found.")
+        return redirect(url_for('login'))
+
+    avatar = request.form.get('avatar')
+    if avatar:
+        user.avatar = avatar
+        db.session.commit()
+        flash("Your avatar has been updated.")
+    else:
+        flash("No avatar selected.")
+
+    return redirect(url_for('dashboard'))
+
 @app.route('/todo')
 def todo():
     return render_template('todo.html')
 
 @app.route('/shop')
 def shop():
-    return render_template('shop.html')
+    if 'email' not in session:
+        flash('Please log in to access the shop.')
+        return redirect(url_for('login'))
 
-@app.route('/settings')
-def settings():
-    return render_template('settings.html')
+    user = User.query.filter_by(email=session['email']).first()
+    if not user:
+        flash('User not found.')
+        return redirect(url_for('login'))
+
+    # Example structure for shop items. This should ideally come from your database.
+    shop_items = {
+        'avatars': [
+            {'name': 'PixelGirl', 'price': 0, 'img': 'pixelGirl.png', 'unlocked': True},
+            {'name': 'PixelBoy', 'price': 0, 'img': 'pixelBoy.png', 'unlocked': True},
+            # Add other avatars with their prices here
+        ],
+        'themes': [
+            # Placeholder for themes
+        ]
+    }
+
+    return render_template('shop.html', user=user, shop_items=shop_items)
+
+
+@app.route('/dashboard')
+def dashboard():
+    if 'email' not in session:
+        flash('Please log in to access the dashboard.')
+        return redirect(url_for('login'))
+
+    user = User.query.filter_by(email=session['email']).first()
+    if not user:
+        flash('User not found.')
+        return redirect(url_for('login'))
+
+    return render_template('dashboard.html', user=user)
 
 @app.route('/logout')
 def logout():
