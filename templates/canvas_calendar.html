@@ -1,4 +1,3 @@
-<<<<<<< HEAD:itsc3155-project/templates/canvas_calendar.html
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -26,7 +25,30 @@
 
 <body>
     
+  <header>
+    <div class="menu-icon" onmouseover="openNav()" onmouseout="closeNav()">&#9776;</div>
+    <h1>PixelPlanner</h1>
+  <div class="profile-info">
+    <img src="{{ url_for('static', filename='images/pixelAvatar.png') }}" alt="Player Avatar" class="avatar">
+    <div class="player-info">
+        <span class="player-name">{{session.get('user_name', 'Guest')}}</span>
+        <span class="player-coins">Coins: 100</span> 
+</header>
 
+
+<div id="navbar" class="sidenav" onmouseover="openNav()" onmouseout="closeNav()">
+    <a href="{{ url_for('dashboard') }}">Dashboard</a>
+    <a href="{{ url_for('canvas_calendar') }}">Calendar</a>
+    <a href="{{ url_for('todo') }}">Todo</a>
+    <a href="{{ url_for('shop') }}">Shop</a>
+    <a href="{{ url_for('settings') }}">Settings</a>
+    {% if 'email' not in session %}
+        <a href="{{ url_for('register') }}">Register</a>
+        <a href="{{ url_for('login') }}">Login</a>
+    {% else %}
+        <a href="{{ url_for('logout') }}">Logout</a>
+    {% endif %}
+</div>
     
       <!-- Event Details Modal -->
 <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
@@ -43,11 +65,14 @@
                 <div class="form-group">
                   <label for="eventType">Event Type</label>
                   <select class="form-control" id="eventType">
-                    <option value="homework">Homework</option>
-                    <option value="class">Class</option>
+                    <option value="assignment">Assignment</option>
                     <option value="project">Project</option>
                     <option value="meeting">Meeting</option>
-                  </select>
+                </select>                
+                </div>
+                <div class="form-group" id="eventNameGroup">
+                  <label for="eventName">Event Name</label>
+                  <input type="text" class="form-control" id="eventName">
                 </div>
                 <div class="form-group" id="dateGroup">
                   <label for="dueDate">Date</label>
@@ -82,28 +107,42 @@
   
   <div id="calendar"></div>
 </div>
-    <ul>
+    <!--<ul>
         {% for event in events %}
             <li>{{ event['title'] }} - Starts at: {{ event['start_at'] }}</li>
         {% endfor %}
-    </ul>
+    </ul> -->
+    <script type="text/javascript">
+      let calendarEvents = {{ events | tojson }};
+      // This converts the calendar events from Python into a JavaScript object
+  </script>
+  
+  <script>
+    $(document).ready(function() {
+        $('#eventType').on('change', function() {
+            var selectedType = $(this).val();
+            // Show Event Name for Assignment and Meeting
+            if (selectedType === 'assignment' || selectedType === 'meeting') {
+                $('#eventNameGroup').show();
+                $('#dateGroup').show(); // Ensure date field is shown for Assignment and Meeting
+            } 
+            // Show Class Group only for Assignment
+            if (selectedType === 'assignment'|| selectedType === 'project') {
+                $('#classGroup').show();
+            } else {
+                $('#classGroup').hide();
+            }
+            
+        });
+    
+        // Trigger the change event on page load to ensure correct initial state
+        $('#eventType').trigger('change');
+    });
+    </script>
+    
     
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Canvas Calendar</title>
-</head>
-<body>
-    <h1>Canvas Calendar Events</h1>
-    <ul>
-        {% for event in events %}
-            <li>{{ event['title'] }} - Starts at: {{ event['start_at'] }}</li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
->>>>>>> ca6cfd737b8af480d8933679ec6b6b3036193d98:templates/canvas_calendar.html
+
+
