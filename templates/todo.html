@@ -6,12 +6,28 @@
     <title>To Do</title>
     <link rel="stylesheet" href="/static/css/styles.css">
 </head>
+<div class="menu-icon" onmouseover="openNav()" onmouseout="closeNav()">&#9776;</div>
 <h1>To Do</h1>
+<a href="/generateList"><button class="tasks">Generate Todo List</button></a>
 <body>
+    <div id="navbar" class="sidenav" onmouseover="openNav()" onmouseout="closeNav()">
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('canvas_calendar') }}">Calendar</a>
+        <a href="{{ url_for('todo') }}">Todo</a>
+        <a href="{{ url_for('shop') }}">Shop</a>
+        <a href="{{ url_for('settings') }}">Settings</a>
+        {% if 'email' not in session %}
+            <a href="{{ url_for('register') }}">Register</a>
+            <a href="{{ url_for('login') }}">Login</a>
+        {% else %}
+            <a href="{{ url_for('logout') }}">Logout</a>
+        {% endif %}
+    </div>
     <ul>
         {% for assignment in assignments %}
-            <li>{{ assignment }}</li>
+        <li class="todoItem"><a href="/delete/{{assignment.assignmentID}}"><button class="finished">Finished</button></a><p>{{ assignment }}</p></li>
         {% endfor %}
     </ul>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

@@ -42,6 +42,13 @@ class User(db.Model):
     def check_password(self, password):
         return bcrypt.checkpw(password.encode('utf-8'), self.password.encode('utf-8'))
 
+class Todo(db.Model):
+    assignmentID = db.Column(db.Integer, primary_key=True)
+    assignmentName = db.Column(db.String(255))
+
+    def __repr__(self):
+        return self.assignmentName
+
 with app.app_context():
     db.create_all()
 
@@ -206,18 +213,38 @@ def update_avatar():
 
     return redirect(url_for('dashboard'))
 
-@app.route('/todo')
-def todo():
+@app.route('/delete/<int:assignmentID>')
+def delete(assignmentID):
+    assignment_to_delete = Todo.query.get_or_404(assignmentID)
+    try:
+        db.session.delete(assignment_to_delete)
+        db.session.commit()
+        return redirect('/todo')
+    except:
+        return 'Could not delete task'
+
+
+@app.route('/generateList')
+def add():
+    count = 0
     user = User.query.filter_by(email=session['email']).first()
     course_codes = user.course_codes_list.split(',') if user.course_codes_list else []
     calendar_events = fetch_canvas_calendar_events(user.id, course_codes)
-    todoList = [];
     for events in calendar_events:
-        if(str(events['start_at'])[0:10] == str(date.today() + timedelta(days=1))[0:10]):
-            todoList.append(str(events['title']))
+       if(str(events['start_at'])[0:10] == str(date.today() + timedelta(days=1))[0:10]):
+           newItem = Todo(assignmentID = count, assignmentName = str(events['title']))
+           try:
+               db.session.add(newItem)
+               db.session.commit()
+               count = count + 1
+           except:
+               return 'Could not create todo list'
+    return redirect('/todo')
 
-
-    return render_template('todo.html', assignments = todoList)
+@app.route('/todo')
+def todo():
+    tasks = Todo.query.all()
+    return render_template('todo.html', assignments = tasks)
 
 @app.route('/shop')
 def shop():
