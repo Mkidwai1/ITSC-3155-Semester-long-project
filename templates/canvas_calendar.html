@@ -32,7 +32,7 @@
     <img src="{{ url_for('static', filename='images/pixelAvatar.png') }}" alt="Player Avatar" class="avatar">
     <div class="player-info">
         <span class="player-name">{{session.get('user_name', 'Guest')}}</span>
-        <span class="player-coins">Coins: 100</span> 
+        <span class="player-coins"><img src="{{ url_for('static', filename='images/coin.png') }}" alt="Coin">Coins: {{ user.coins }}</span> 
 </header>
 
 

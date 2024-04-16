@@ -887,6 +887,15 @@ header h1 {
 }
 
 /*To-do List CSS*/
+.todoHeader{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 100px;
+    margin-left: 35px;
+    text-decoration: underline;
+}
+
 .todoItem{
     display: flex;
     flex-direction: row;
@@ -895,4 +904,6 @@ header h1 {
 .finished{
     margin-right:10px;
     height: 50px;
+    font-weight: bold;
+    font-size: medium;
 }

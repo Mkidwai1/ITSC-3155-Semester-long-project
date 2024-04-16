@@ -6,9 +6,18 @@
     <title>To Do</title>
     <link rel="stylesheet" href="/static/css/styles.css">
 </head>
-<div class="menu-icon" onmouseover="openNav()" onmouseout="closeNav()">&#9776;</div>
-<h1>To Do</h1>
-<a href="/generateList"><button class="tasks">Generate Todo List</button></a>
+<header>
+    <div class="menu-icon" onmouseover="openNav()" onmouseout="closeNav()">&#9776;</div>
+    <div class="profile-info">
+    <img src="{{ url_for('static', filename='images/pixelAvatar.png') }}" alt="Player Avatar" class="avatar">
+    <div class="player-info">
+        <span class="player-name">{{session.get('user_name', 'Guest')}}</span>
+        <span class="player-coins"><img src="{{ url_for('static', filename='images/coin.png') }}" alt="Coin">Coins: {{ user.coins }}</span> 
+    </header>
+<div class="todoHeader">
+    <h1>To Do</h1>
+    <a href="/generateList"><button class="finished">Generate Todo List</button></a>
+</div>
 <body>
     <div id="navbar" class="sidenav" onmouseover="openNav()" onmouseout="closeNav()">
         <a href="{{ url_for('dashboard') }}">Dashboard</a>
