@@ -5,6 +5,7 @@ html {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
+    background-color: #f4f4f7;
 }
 
 .background-image::before {
@@ -50,7 +51,7 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #f3f3f3;
+    background-color: #5484d6;
     padding: 10px 20px;
     position: relative;
 }
@@ -58,6 +59,7 @@ header {
 header h1 {
     margin: 0;
     flex-grow: 1;
+    color: #f8f9fa;
     text-align: center;
 }
 
@@ -75,7 +77,8 @@ header h1 {
     z-index: 1;
     top: 0;
     left: 0;
-    background-color: #333;
+    background-color: #122f5e; /* Softer light blue */
+    color: #8395a7; /* Darker blue for readable contrast */
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 60px;
@@ -103,6 +106,8 @@ header h1 {
     position: absolute;
     top: 10px;
     right: 20px;
+    font-family: 'Roboto', sans-serif; /* Roboto font for modern look */
+    color: #f8f9fa; 
 }
 
 .avatar {
@@ -161,23 +166,6 @@ header h1 {
     width: 30%;
     /* Adjust size as needed */
     text-align: right;
-}
-
-.waving-avatar {
-    animation: wave-animation 2s infinite;
-}
-
-/* Simple wave animation */
-@keyframes wave-animation {
-
-    0%,
-    100% {
-        transform: rotate(0deg);
-    }
-
-    50% {
-        transform: rotate(10deg);
-    }
 }
 
 
@@ -429,133 +417,6 @@ body {
 .fc-event-title {
     color: #ffffff;
     /* White text color for event titles */
-}
-
-
-body,
-html {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-}
-
-.background-image::before {
-    content: '';
-    position: fixed;
-    left: 0;
-    right: 0;
-    z-index: -1;
-    /* Ensure the image stays in the background */
-    display: block;
-    background-image: url('images/uncc.png');
-    /* Adjust path as needed */
-    background-size: cover;
-    background-position: center;
-    width: 100%;
-    height: 100%;
-    transition: opacity 0.3s ease-in-out;
-}
-
-@keyframes fadeInTextBackground {
-    0% {
-        background-color: rgba(255, 255, 255, 0);
-        color: #000;
-    }
-
-    100% {
-        background-color: rgba(255, 255, 255, 0.75);
-        color: #333;
-    }
-}
-
-
-/* Reset margins and padding */
-body,
-html {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-}
-
-/* Header with the centered title */
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #f3f3f3;
-    padding: 10px 20px;
-    position: relative;
-}
-
-header h1 {
-    margin: 0;
-    flex-grow: 1;
-    text-align: center;
-}
-
-/* Menu icon styling */
-.menu-icon {
-    cursor: pointer;
-    font-size: 24px;
-}
-
-/* Side navigation menu */
-.sidenav {
-    height: 100%;
-    width: 0;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    background-color: #333;
-    overflow-x: hidden;
-    transition: 0.5s;
-    padding-top: 60px;
-}
-
-/* Navigation links */
-.sidenav a {
-    padding: 8px 8px 8px 32px;
-    text-decoration: none;
-    font-size: 25px;
-    color: white;
-    display: block;
-    transition: 0.3s;
-}
-
-/* Hover effect for links */
-.sidenav a:hover {
-    background-color: #575757;
-}
-
-/* Profile info in the top right corner */
-.profile-info {
-    display: flex;
-    align-items: center;
-    position: absolute;
-    top: 10px;
-    right: 20px;
-}
-
-.avatar {
-    height: 50px;
-    width: auto;
-    border-radius: 50%;
-}
-
-.player-info {
-    display: flex;
-    flex-direction: column;
-    margin-left: 10px
-}
-
-/* Main content layout */
-.main-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
 }
 
 /* Assignments container styling */

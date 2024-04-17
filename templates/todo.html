@@ -42,5 +42,6 @@
         <li class="todoItem"><a href="/delete/{{assignment.assignmentID}}"><button class="finished">Finished</button></a><p>{{ assignment }}</p></li>
         {% endfor %}
     </ul>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

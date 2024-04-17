@@ -55,8 +55,11 @@ with app.app_context():
     db.create_all()
 
 @app.route('/')
-def index():
-    return render_template('index.html')
+def home():
+    if 'email' in session:
+        return redirect(url_for('dashboard'))
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -304,7 +307,7 @@ def logout():
     session.pop('email', None)  # Remove user email from session
     session.pop('name', None)   # Remove user name from session
     flash('You have been logged out.')
-    return redirect(url_for('index'))
+    return redirect(url_for('dashboard'))
 
 @app.route('/forgot', methods=['GET', 'POST'])
 def forgot():
