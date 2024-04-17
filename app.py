@@ -31,16 +31,25 @@ class User(db.Model):
     canvas_api_key = db.Column(db.String(255))
     course_codes_list = db.Column(db.String(255))  # New field for storing course codes
     avatar = db.Column(db.String(255))
+    coins = db.Column(db.Integer)
 
-    def __init__(self, email, password, name, canvas_api_key, avatar):
+    def __init__(self, email, password, name, canvas_api_key, avatar, coins):
         self.name = name
         self.email = email
         self.password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         self.canvas_api_key = canvas_api_key
         self.avatar = avatar
+        self.coins = coins
 
     def check_password(self, password):
         return bcrypt.checkpw(password.encode('utf-8'), self.password.encode('utf-8'))
+
+class Todo(db.Model):
+    assignmentID = db.Column(db.Integer, primary_key=True)
+    assignmentName = db.Column(db.String(255))
+
+    def __repr__(self):
+        return self.assignmentName
 
 with app.app_context():
     db.create_all()
@@ -58,6 +67,7 @@ def register():
         password = request.form.get('password')
         canvas_api_key = request.form.get('canvas_api_key')
         avatar = request.form.get('avatar', 'pixelBoy.png')  # Set default avatar if none selected
+        coins = 0
         
         # Check if user already exists
         existing_user = User.query.filter_by(email=email).first()
@@ -66,7 +76,7 @@ def register():
             return redirect(url_for('register'))
 
         # Create new user with either selected avatar or default
-        new_user = User(email=email, password=password, name=name, canvas_api_key=canvas_api_key, avatar=avatar)
+        new_user = User(email=email, password=password, name=name, canvas_api_key=canvas_api_key, avatar=avatar, coins=coins)
         db.session.add(new_user)
         db.session.commit()
         flash('Registration successful. Please log in.')
@@ -84,6 +94,7 @@ def login():
             session['email'] = user.email
             session['user_name'] = user.name
             session['user_avatar'] = user.avatar if user.avatar else 'pixelBoy.png' # Assuming user.avatar stores the filename
+            session['user_coins'] = user.coins
             return redirect(url_for('dashboard'))
         else:
             flash('Invalid Email or Password. Please try again.')
@@ -120,7 +131,7 @@ def canvas_calendar():
     course_codes = user.course_codes_list.split(',') if user.course_codes_list else []
     calendar_events = fetch_canvas_calendar_events(user.id, course_codes)
     print("Calendar events in route:", calendar_events)  
-    return render_template('canvas_calendar.html', events=calendar_events)
+    return render_template('canvas_calendar.html', events=calendar_events, user=user)
 import requests
 
 def fetch_canvas_calendar_events(user_id, course_codes):
@@ -206,18 +217,48 @@ def update_avatar():
 
     return redirect(url_for('dashboard'))
 
-@app.route('/todo')
-def todo():
+@app.route('/delete/<int:assignmentID>')
+def delete(assignmentID):
+    user = User.query.filter_by(email=session['email']).first()
+    assignment_to_delete = Todo.query.get_or_404(assignmentID)
+    try:
+        if(user.coins == None):
+            user.coins = 0
+        user.coins = user.coins + 10
+        db.session.delete(assignment_to_delete)
+        db.session.commit()
+        return redirect('/todo')
+    except:
+        return 'Could not delete assignment'
+
+
+@app.route('/generateList')
+def add():
+    count = 0
     user = User.query.filter_by(email=session['email']).first()
     course_codes = user.course_codes_list.split(',') if user.course_codes_list else []
     calendar_events = fetch_canvas_calendar_events(user.id, course_codes)
-    todoList = [];
     for events in calendar_events:
-        if(str(events['start_at'])[0:10] == str(date.today() + timedelta(days=1))[0:10]):
-            todoList.append(str(events['title']))
+       if(str(events['start_at'])[0:10] == str(date.today() + timedelta(days=1))[0:10]):
+           if(Todo.query.get(count) != None):
+                try:
+                    db.session.delete(Todo.query.get(count))
+                except:
+                    return 'Could not clear table'
+           newItem = Todo(assignmentID = count, assignmentName = str(events['title']))
+           try:
+               db.session.add(newItem)
+               db.session.commit()
+               count = count + 1
+           except:
+               return 'Could not create to do list'
+    return redirect('/todo')
 
-
-    return render_template('todo.html', assignments = todoList)
+@app.route('/todo')
+def todo():
+    user = User.query.filter_by(email=session['email']).first()
+    tasks = Todo.query.all()
+    return render_template('todo.html', assignments = tasks, user=user)
 
 @app.route('/shop')
 def shop():

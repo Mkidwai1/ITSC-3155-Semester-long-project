@@ -885,3 +885,25 @@ header h1 {
     display: block; /* Ensure the image is a block-level element to center it */
     max-width: 100%; /* Ensure it does not overflow its container */
 }
+
+/*To-do List CSS*/
+.todoHeader{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 100px;
+    margin-left: 35px;
+    text-decoration: underline;
+}
+
+.todoItem{
+    display: flex;
+    flex-direction: row;
+}
+
+.finished{
+    margin-right:10px;
+    height: 50px;
+    font-weight: bold;
+    font-size: medium;
+}
