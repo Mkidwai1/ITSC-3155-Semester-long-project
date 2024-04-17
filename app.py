@@ -5,6 +5,7 @@ from flask_mail import Mail, Message
 import bcrypt
 from random import randint
 from datetime import date, timedelta
+from flask_socketio import SocketIO, send
 
 
 app = Flask(__name__)
@@ -19,6 +20,7 @@ mail=Mail(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 app.secret_key = 'itis3155proj'
+socketio = SocketIO(app)
 
 # Define your Canvas instance URL here
 CANVAS_INSTANCE_URL = 'https://uncc.instructure.com'
@@ -348,8 +350,24 @@ def verify_otp():
             return render_template('verify_otp.html')
     return render_template('verify_otp.html')
 
+@app.route('/chat')
+def chat():
+    if 'email' not in session:
+        flash('Please log in to access the chat.')
+        return redirect(url_for('login'))
 
+    user = User.query.filter_by(email=session['email']).first()
+    if not user:
+        flash('User not found.')
+        return redirect(url_for('login'))
 
+    return render_template('chat.html', user=user)
+
+@socketio.on('message')
+def handle_message(msg):
+    send(msg, broadcast=True)
+    
 if __name__ == '__main__':
-    app.run(debug=True)
+    socketio.run(app, debug=True)
+    #app.run(debug=True)
 
