@@ -39,22 +39,20 @@
     <div id="messages"></div>
     <form id="message-form">
         <input type="text" id="message-input">
-        <button type="submit">Send</button>
+        <button type="submit" id="send-btn">Send</button>
     </form>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
     <script>
         var socket = io.connect('http://' + document.domain + ':' + location.port);
-
         socket.on('message', function(msg) {
             var node = document.createElement("LI");
             var textnode = document.createTextNode(msg);
             node.appendChild(textnode);
             document.getElementById("messages").appendChild(node);
         });
-
         document.getElementById("message-form").onsubmit = function(event) {
-            event.preventDefault();
+            event.preventDefault(); // Prevent form submission
             var messageInput = document.getElementById("message-input");
             socket.send("{{ user.name }}: " + messageInput.value);
             messageInput.value = '';
