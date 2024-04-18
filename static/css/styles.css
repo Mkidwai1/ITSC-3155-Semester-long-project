@@ -457,23 +457,6 @@ body {
     text-align: right;
 }
 
-.waving-avatar {
-    animation: wave-animation 2s infinite;
-}
-
-/* Simple wave animation */
-@keyframes wave-animation {
-
-    0%,
-    100% {
-        transform: rotate(0deg);
-    }
-
-    50% {
-        transform: rotate(10deg);
-    }
-}
-
 
 /* Form container */
 .signup-container {
@@ -730,7 +713,7 @@ body {
     padding-right: 15px; /* Add some spacing between the two columns */
 }
 
-/* Optional: Additional styling for tabs to enhance their appearance */
+
 .nav-tabs .nav-link.active {
     color: #fff;
     background-color: #007bff;
@@ -768,3 +751,42 @@ body {
     font-weight: bold;
     font-size: medium;
 }
+
+/*dashboard elements*/
+.rounded {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+    margin-top: 20px;
+}
+
+.notification-box h3,
+.task-box h3 {
+    color: #333;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+
+.notification-box p,
+.task-box li a {
+    padding: 10px 0;
+    display: block;
+    color: #666;
+}
+
+.task-box li a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+.task-box li a:hover {
+    text-decoration: underline;
+}
+
+.notification-box, .task-box {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }

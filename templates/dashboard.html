@@ -31,6 +31,7 @@
     <a href="{{ url_for('canvas_calendar') }}">Calendar</a>
     <a href="{{ url_for('todo') }}">Todo</a>
     <a href="{{ url_for('shop') }}">Shop</a>
+    <a href="{{ url_for('chat') }}">Chat</a>
     <a href="{{ url_for('settings') }}">Settings</a>
     {% if 'email' not in session %}
         <a href="{{ url_for('register') }}">Register</a>
@@ -48,18 +49,35 @@
             <br>
             <a href="/shop" class="btn btn-primary mt-3">Change Avatar</a>
         </div>
-        <div class="col-md-6">
-            <h3>Daily Tasks</h3>
-            <ul class="list-unstyled">
-                <!-- Assuming tasks are passed to the template -->
-                {% for task in tasks %}
-                    <li><a href="/todo">{{ task.name }}</a></li>
-                {% endfor %}
-            </ul>
+        <div class="col-md-12">
+            <div class="notification-box rounded">
+                <h3>Notifications</h3>
+                <!-- Example notification content -->
+                <p><strong>Chat from Jane:</strong> Hello, are you available for a meeting tomorrow?</p>
+                <p><strong>Reminder:</strong> Team meeting at 3 PM today.</p>
+            </div>
+        </div>
+        <div class="col-md-12 mt-4">
+            <div class="task-box rounded">
+                <h3>Daily Tasks</h3>
+                <ul class="list-unstyled">
+                    {% for task in tasks %}
+                        <li><a href="/todo">{{ task.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
         </div>
     </div>
 </div>
-
+    </div>
+</div>
+<footer class="footer bg-dark text-white py-4">
+    <div class="container text-center">
+        <p>Contact us: support@pixelplanner.com</p>
+        <p>&copy; 2024 PixelPlanner. All rights reserved.</p>
+    </div>
+</footer>
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
+
 </html>
