@@ -720,15 +720,6 @@ body {
     border-color: #007bff;
 }
 
-/* Resets the border style for the selected avatar, if previously styled */
-.user-avatar-large img {
-    width: auto; /* Adjust based on the aspect ratio of your images */
-    height: 90vh; /* Adjust the height to be less than the viewport to ensure it fits */
-    object-fit: contain; /* This will make sure the entire avatar is visible */
-    margin: 5vh auto; /* Add some margin to the top and bottom */
-    display: block; /* Ensure the image is a block-level element to center it */
-    max-width: 100%; /* Ensure it does not overflow its container */
-}
 
 /*To-do List CSS*/
 .todoHeader{

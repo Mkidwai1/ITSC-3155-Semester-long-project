@@ -27,12 +27,12 @@ document.addEventListener('DOMContentLoaded', function () {
             title: event.title,
             start: event.start_at,
         })),
-        dateClick: function(info) {
+        dateClick: function (info) {
             // Populate the modal for new event
             $('#dueDate').val(info.dateStr);
             $('#eventModal').modal('show');
         },
-        eventClick: function(info) {
+        eventClick: function (info) {
             var eventObj = info.event;
             $('#editAssignmentName').val(eventObj.title);
             $('#editDueDate').val(eventObj.start.toISOString().substring(0, 10));
@@ -44,9 +44,9 @@ document.addEventListener('DOMContentLoaded', function () {
     calendar.render();
 
     // Separate click handler for updating the event
-    $('#updateEvent').on('click', function() {
+    $('#updateEvent').on('click', function () {
         // Ensure eventObj is available here
-        var eventObj = calendar.getEventById($('#eventId').val()); 
+        var eventObj = calendar.getEventById($('#eventId').val());
         if (!eventObj) {
             console.error('Event not found');
             return;
@@ -56,11 +56,11 @@ document.addEventListener('DOMContentLoaded', function () {
             event_id: eventObj.id,
             title: $('#editAssignmentName').val(),
             start_date: $('#editDueDate').val() + 'T' + ($('#editEventTime').val() || '00:00'), // Adjust as necessary
-            
+
         };
 
-        
-        
+
+
 
         $('#editEventModal').modal('hide');
     });
@@ -70,22 +70,22 @@ document.addEventListener('DOMContentLoaded', function () {
     calendar.render();
 
     // Handle saving new event from the modal
-    $('#saveEvent').on('click', function() {
+    $('#saveEvent').on('click', function () {
         var eventType = $('#eventType').val();
         var assignmentName = $('#assignmentName').val();
         var dueDate = $('#dueDate').val();
         var eventTime = $('#eventTime').val();
         var eventLocation = $('#eventLocation').val();
         var eventClass = $('#eventClass').val();
-    
+
         var eventData = {
             title: assignmentName + ' - ' + eventType,
             start: dueDate + 'T' + (eventTime || '00:00'), // If time is not provided, default to '00:00'
             location: eventLocation,
             className: eventClass
-            
+
         };
-    
+
         // Ensure all necessary fields are filled
         if (eventData.title && eventData.start) {
             calendar.addEvent(eventData);
@@ -95,10 +95,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
     });
-    
+
 
     // Handle event type change in the modal
-    $('#eventType').on('change', function() {
+    $('#eventType').on('change', function () {
         var selectedType = $(this).val();
         $('#dateGroup, #timeGroup, #locationGroup, #classGroup').hide();
         if (selectedType === 'homework' || selectedType === 'project') {
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function () {
             $('#timeGroup, #locationGroup').show();
         }
     }).trigger('change');
-    
+
 });
 
 
@@ -120,3 +120,39 @@ function convertCanvasEventsToFullCalendarEvents(canvasEvents) {
         };
     }).filter(event => event.start); // Filter out events without a start date
 }
+
+
+$(document).ready(function () {
+    $('.shop-item').click(function () {
+        var name = $(this).data('name');
+        var price = $(this).data('price');
+        var img = $(this).data('img');
+
+        $('#purchaseItemImg').attr('src', img);
+        $('#purchaseModalLabel').text('Buy ' + name + '?');
+        $('#purchaseItemPrice').text('Price: ' + price + ' coins');
+
+        // Setup confirmation button
+        $('#confirmPurchase').off('click').on('click', function () {
+            // Ajax call to server to handle purchase
+            $.ajax({
+                url: '/buy-item',
+                type: 'POST',
+                data: {
+                    name: name,
+                    price: price
+                },
+                success: function (response) {
+                    if (response.success) {
+                        $('#purchaseModal').modal('hide');
+                        alert('Purchase successful!');
+                        // Update coins display, etc.
+                    } else {
+                        alert(response.message);
+                    }
+                }
+            });
+        });
+    });
+});
+

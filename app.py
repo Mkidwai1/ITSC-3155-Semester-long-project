@@ -6,6 +6,7 @@ import bcrypt
 from random import randint
 from datetime import date, timedelta
 from flask_socketio import SocketIO, send
+from flask import jsonify
 
 
 app = Flask(__name__)
@@ -279,8 +280,8 @@ def shop():
     # Example structure for shop items. This should ideally come from your database.
     shop_items = {
         'avatars': [
-            {'name': 'PixelGirl', 'price': 0, 'img': 'pixelGirl.png', 'unlocked': True},
-            {'name': 'PixelBoy', 'price': 0, 'img': 'pixelBoy.png', 'unlocked': True},
+            {'name': 'PixelGirl', 'price': 10, 'img': 'pixelGirl.png', 'unlocked': True},
+            {'name': 'PixelBoy', 'price': 10, 'img': 'pixelBoy.png', 'unlocked': True},
             # Add other avatars with their prices here
         ],
         'themes': [
@@ -289,6 +290,38 @@ def shop():
     }
 
     return render_template('shop.html', user=user, shop_items=shop_items)
+
+@app.route('/buy-item', methods=['POST'])
+def buy_item():
+    if 'email' not in session:
+        return jsonify({'success': False, 'message': 'Please log in to make purchases.'}), 401
+
+    user = User.query.filter_by(email=session['email']).first()
+    if not user:
+        return jsonify({'success': False, 'message': 'User not found.'}), 404
+
+    try:
+        item_id = request.form.get('item_id', type=int)
+        item_price = request.form.get('price', type=int)
+    except TypeError:
+        return jsonify({'success': False, 'message': 'Invalid data.'}), 400
+
+    # Here you'd check the existence of the item
+    item = Item.query.get(item_id)
+    if not item:
+        return jsonify({'success': False, 'message': 'Item not found.'}), 404
+
+    if user.coins < item_price:
+        return jsonify({'success': False, 'message': 'Not enough coins.'}), 400
+
+    user.coins -= item_price
+    # Assuming you have a relationship set up to track purchased items
+    user.purchased_items.append(item)
+
+    db.session.commit()
+
+    return jsonify({'success': True, 'message': 'Purchase successful!'})
+
 
 
 @app.route('/dashboard')
