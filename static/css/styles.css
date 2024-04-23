@@ -722,27 +722,64 @@ body {
 
 
 /*To-do List CSS*/
-.todoHeader{
+.todoPageContent{
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
-    gap: 100px;
-    margin-left: 35px;
+}
+
+.todoHeader{
+    margin-bottom: 20px;
+    margin-top: 10px;
     text-decoration: underline;
+    font-family: Arial, sans-serif;
+}
+
+.todoList{
+    margin-bottom: 100px;
 }
 
 .todoItem{
     display: flex;
     flex-direction: row;
+    align-items: center;
+    font-size: larger;
+    font-family: Arial, sans-serif;
+    margin-bottom:2px;
 }
 
-.finished{
+.checkButton{
     margin-right:10px;
     height: 50px;
     font-weight: bold;
     font-size: medium;
+    width:50px;
+    background-color: white;
 }
 
+.checkButton:hover{
+    background-color: gainsboro;
+}
+
+ .fa-solid{
+    color:#28a745;
+    font-size: xx-large;
+ }
+
+ .newListButton{
+    width:300px;
+    height: 50px;
+    font-size: large;
+    background-color: #007bff;
+    color:white;
+    border:none;
+    border-radius: 5px;
+ }
+
+ .newListButton:hover{
+    background-color: #0056b3;
+ }
+ 
 /*dashboard elements*/
 .rounded {
     background-color: #fff;
