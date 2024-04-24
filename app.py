@@ -331,11 +331,12 @@ def dashboard():
         return redirect(url_for('login'))
 
     user = User.query.filter_by(email=session['email']).first()
+    assignments = Todo.query.all()
     if not user:
         flash('User not found.')
         return redirect(url_for('login'))
 
-    return render_template('dashboard.html', user=user)
+    return render_template('dashboard.html', user=user, tasks = assignments)
 
 @app.route('/logout')
 def logout():

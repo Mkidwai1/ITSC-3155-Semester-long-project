@@ -60,11 +60,12 @@
         <div class="col-md-12 mt-4">
             <div class="task-box rounded">
                 <h3>Daily Tasks</h3>
-                <ul class="list-unstyled">
+                <ul class="list">
                     {% for task in tasks %}
-                        <li><a href="/todo">{{ task.name }}</a></li>
+                        <li>{{ task.assignmentName }}</a></li>
                     {% endfor %}
                 </ul>
+                <a href="/todo" class="btn btn-primary mt-3">To-Do List</a>
             </div>
         </div>
     </div>
