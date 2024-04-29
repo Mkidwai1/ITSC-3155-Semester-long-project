@@ -358,6 +358,10 @@ body {
     max-width: 1100px;
     margin: 40px auto;
     align-self: center;
+    background-color: #ffffff; /* Changes the color of the calendar itself */
+}
+#canvas-calendar {
+    background-color: #ffffff; /*changes the color of the calendar page*/
 }
 
 #calendar-container {
@@ -806,3 +810,5 @@ body {
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
+
+  
