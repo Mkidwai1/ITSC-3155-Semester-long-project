@@ -26,6 +26,33 @@
 
 <body>
     
+<form class="color-picker" 
+action="">
+  <fieldset>
+    <legend class="visually-hidden"> Pick a color scheme</legend>
+    <label for ="light" class="visually-hidden"> Light Theme</label>
+    <input type="radio" 
+    name="theme" id="light" checked>
+    
+    <label for ="pink" class="visually-hidden"> Pink Theme</label>
+    <input type="radio" 
+    name="theme" id="pink" checked>
+
+    <label for ="blue" class="visually-hidden"> Blue Theme</label>
+    <input type="radio" 
+    name="theme" id="blue" checked>
+
+    <label for ="green" class="visually-hidden"> Green</label>
+    <input type="radio" 
+    name="theme" id="green" checked>
+
+    <label for ="dark" class="visually-hidden"> Dark</label>
+    <input type="radio" 
+    name="theme" id="dark" checked>
+  </fieldset>
+</form>
+
+    
 <div id="navbar" class="sidenav" onmouseover="openNav()" onmouseout="closeNav()">
     <a href="{{ url_for('dashboard') }}">Dashboard</a>
     <a href="{{ url_for('canvas_calendar') }}">Calendar</a>
@@ -44,7 +71,7 @@
 <div class="container mt-5">
     <div class="row">
         <div class="col-md-6">
-            <h3>Current Avatar</h3>
+            <h3 class="avatar-header"> Current Avatar</h3>
             <img src="{{ url_for('static', filename='images/' + (user.avatar if user.avatar else 'pixelBoy.png')) }}" alt="User Avatar" class="user-avatar-large">
             <br>
             <a href="/shop" class="btn btn-primary mt-3">Change Avatar</a>
@@ -60,11 +87,12 @@
         <div class="col-md-12 mt-4">
             <div class="task-box rounded">
                 <h3>Daily Tasks</h3>
-                <ul class="list-unstyled">
+                <ul class="list">
                     {% for task in tasks %}
-                        <li><a href="/todo">{{ task.name }}</a></li>
+                        <li>{{ task.assignmentName }}</a></li>
                     {% endfor %}
                 </ul>
+                <a href="/todo" class="btn btn-primary mt-3">To-Do List</a>
             </div>
         </div>
     </div>

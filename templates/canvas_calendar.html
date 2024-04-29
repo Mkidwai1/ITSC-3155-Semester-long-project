@@ -24,7 +24,6 @@
     
 
 <body>
-    
   <header>
     <div class="menu-icon" onmouseover="openNav()" onmouseout="closeNav()">&#9776;</div>
     <h1>PixelPlanner</h1>
@@ -34,7 +33,32 @@
         <span class="player-name">{{session.get('user_name', 'Guest')}}</span>
         <span class="player-coins"><img src="{{ url_for('static', filename='images/coin.png') }}" alt="Coin">Coins: {{ user.coins }}</span> 
 </header>
+   
+<form class="color-picker" 
+action="">
+  <fieldset>
+    <legend class="visually-hidden"> Pick a color scheme</legend>
+    <label for ="light" class="visually-hidden"> Light Theme</label>
+    <input type="radio" 
+    name="theme" id="light" checked>
+    
+    <label for ="pink" class="visually-hidden"> Pink Theme</label>
+    <input type="radio" 
+    name="theme" id="pink" checked>
 
+    <label for ="blue" class="visually-hidden"> Blue Theme</label>
+    <input type="radio" 
+    name="theme" id="blue" checked>
+
+    <label for ="green" class="visually-hidden"> Green</label>
+    <input type="radio" 
+    name="theme" id="green" checked>
+
+    <label for ="dark" class="visually-hidden"> Dark</label>
+    <input type="radio" 
+    name="theme" id="dark" checked>
+  </fieldset>
+</form>
 
 <div id="navbar" class="sidenav" onmouseover="openNav()" onmouseout="closeNav()">
     <a href="{{ url_for('dashboard') }}">Dashboard</a>
