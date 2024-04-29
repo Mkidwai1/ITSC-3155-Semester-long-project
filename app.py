@@ -9,6 +9,7 @@ from flask_socketio import SocketIO, send
 from flask import jsonify
 
 
+
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config["MAIL_SERVER"]='smtp.gmail.com'
@@ -46,6 +47,31 @@ class User(db.Model):
 
     def check_password(self, password):
         return bcrypt.checkpw(password.encode('utf-8'), self.password.encode('utf-8'))
+    
+class Item(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    price = db.Column(db.Integer, nullable=False)
+    img = db.Column(db.String(255))
+
+    def __repr__(self):
+        return f'<Item {self.name}>'
+    
+shop_items = {
+    1: {'name': 'PixelGirl', 'price': 10, 'img': 'pixelGirl.png', 'unlocked': False},
+    2: {'name': 'PixelBoy', 'price': 10, 'img': 'pixelBoy.png', 'unlocked': True},  # Default unlocked
+    # Additional items...
+}
+
+
+class UserItem(db.Model):
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    item_id = db.Column(db.Integer, db.ForeignKey('item.id'), primary_key=True)
+    unlocked = db.Column(db.Boolean, default=False)
+
+    user = db.relationship('User', backref=db.backref('user_items', lazy='dynamic'))
+    item = db.relationship('Item', backref=db.backref('user_items', lazy='dynamic'))
+
 
 class Todo(db.Model):
     assignmentID = db.Column(db.Integer, primary_key=True)
@@ -54,8 +80,30 @@ class Todo(db.Model):
     def __repr__(self):
         return self.assignmentName
 
+def seed_items():
+    # Clear existing items to prevent duplication
+    db.session.query(Item).delete()
+
+    # Define the items to add
+    items = [
+        Item(name='PixelGirl', price=0, img='pixelGirl.png'),
+        Item(name='PixelBoy', price=0, img='pixelBoy.png'),
+        Item(name='Blue Boy', price=100, img='blueBoy.png'),
+        Item(name='Pink Girl', price=100, img='pink1Girl.png'),
+        Item(name='Gray Boy', price=100, img='grayBoy.png'),
+        Item(name='Green Girl', price=100, img='greenGirl.png'),
+        Item(name='Pink 2Girl', price=100, img='pink2Girl.png'),
+    ]
+
+    # Add new items to the database
+    db.session.bulk_save_objects(items)
+    db.session.commit()
+    print("Database seeded with initial items.")
+
 with app.app_context():
     db.create_all()
+    seed_items()
+
 
 @app.route('/')
 def home():
@@ -101,6 +149,7 @@ def login():
             session['user_name'] = user.name
             session['user_avatar'] = user.avatar if user.avatar else 'pixelBoy.png' # Assuming user.avatar stores the filename
             session['user_coins'] = user.coins
+            session['unlocked_items'] = [item['item_id'] for item in shop_items['avatars'] if item['unlocked']]
             return redirect(url_for('dashboard'))
         else:
             flash('Invalid Email or Password. Please try again.')
@@ -201,27 +250,44 @@ def fetch_canvas_calendar_events(user_id, course_codes):
     return all_items
 
 
-#changing/customizing avatar to be implemented
-@app.route('/update_avatar', methods=['POST'])
-def update_avatar():
-    if 'email' not in session:
-        flash("Please log in to update your avatar.")
-        return redirect(url_for('login'))
+# #changing/customizing avatar to be implemented
+# @app.route('/update_avatar', methods=['POST'])
+# def update_avatar():
+#     if 'email' not in session:
+#         flash("Please log in to update your avatar.")
+#         return redirect(url_for('login'))
 
-    user = User.query.filter_by(email=session['email']).first()
-    if not user:
-        flash("User not found.")
-        return redirect(url_for('login'))
+#     user = User.query.filter_by(email=session['email']).first()
+#     if not user:
+#         flash("User not found.")
+#         return redirect(url_for('login'))
 
-    avatar = request.form.get('avatar')
-    if avatar:
-        user.avatar = avatar
+#     avatar = request.form.get('avatar')
+#     if avatar:
+#         user.avatar = avatar
+#         db.session.commit()
+#         flash("Your avatar has been updated.")
+#         return jsonify({'success': True, 'message': 'Avatar updated successfully!'})
+#     else:
+#         flash("No avatar selected.")
+#         return jsonify({'success': False, 'message': 'No avatar selected.'})
+    
+    
+    
+@app.route('/set-avatar', methods=['POST'])
+def set_avatar():
+        if 'email' not in session:
+            return jsonify({'success': False, 'message': 'Please log in first.'}), 401
+        user = User.query.filter_by(email=session['email']).first()
+        item_id = request.form.get('item_id', type=int)
+        user_item = UserItem.query.filter_by(user_id=user.id, item_id=item_id).first()
+        if not user_item or not user_item.unlocked:
+            return jsonify({'success': False, 'message': 'Avatar not unlocked or does not exist.'}), 404
+        UserItem.query.filter(UserItem.user_id == user.id).update({'active': False})
+        user_item.active = True
         db.session.commit()
-        flash("Your avatar has been updated.")
-    else:
-        flash("No avatar selected.")
+        return jsonify({'success': True, 'message': 'Avatar set successfully!', 'new_avatar': url_for('static', filename='images/' + user_item.item.img)})
 
-    return redirect(url_for('dashboard'))
 
 @app.route('/delete/<int:assignmentID>')
 def delete(assignmentID):
@@ -266,6 +332,15 @@ def todo():
     tasks = Todo.query.all()
     return render_template('todo.html', assignments = tasks, user=user)
 
+# Global definition
+shop_items = {
+    'avatars': [
+        {'item_id': 1, 'name': 'PixelGirl', 'price': 10, 'img': 'pixelGirl.png', 'unlocked': True},
+        {'item_id': 2, 'name': 'PixelBoy', 'price': 10, 'img': 'pixelBoy.png', 'unlocked': True},
+    ],
+    'themes': []
+}
+
 @app.route('/shop')
 def shop():
     if 'email' not in session:
@@ -277,19 +352,23 @@ def shop():
         flash('User not found.')
         return redirect(url_for('login'))
 
-    # Example structure for shop items. This should ideally come from your database.
-    shop_items = {
-        'avatars': [
-            {'name': 'PixelGirl', 'price': 10, 'img': 'pixelGirl.png', 'unlocked': True},
-            {'name': 'PixelBoy', 'price': 10, 'img': 'pixelBoy.png', 'unlocked': True},
-            # Add other avatars with their prices here
-        ],
-        'themes': [
-            # Placeholder for themes
-        ]
-    }
+    # Fetch all items and check which ones are unlocked
+    all_items = Item.query.all()
+    unlocked_items = {ui.item.id for ui in user.user_items if ui.unlocked}
 
-    return render_template('shop.html', user=user, shop_items=shop_items)
+    # Mark items as unlocked in the context sent to the template
+    items_for_display = []
+    for item in all_items:
+        items_for_display.append({
+            'id': item.id,
+            'name': item.name,
+            'img': item.img,
+            'price': item.price,
+            'unlocked': item.id in unlocked_items
+        })
+
+    return render_template('shop.html', user=user, items=items_for_display)
+
 
 @app.route('/buy-item', methods=['POST'])
 def buy_item():
@@ -300,29 +379,23 @@ def buy_item():
     if not user:
         return jsonify({'success': False, 'message': 'User not found.'}), 404
 
-    try:
-        item_id = request.form.get('item_id', type=int)
-        item_price = request.form.get('price', type=int)
-    except TypeError:
-        return jsonify({'success': False, 'message': 'Invalid data.'}), 400
-
-    # Here you'd check the existence of the item
+    item_id = request.form.get('item_id', type=int)
+    price = request.form.get('price', type=int)  # This should be validated or derived from the database
     item = Item.query.get(item_id)
+
     if not item:
         return jsonify({'success': False, 'message': 'Item not found.'}), 404
-
-    if user.coins < item_price:
+    if user.coins < item.price:
         return jsonify({'success': False, 'message': 'Not enough coins.'}), 400
+    if UserItem.query.filter_by(user_id=user.id, item_id=item.id).first():
+        return jsonify({'success': False, 'message': 'Item already purchased.'}), 400
 
-    user.coins -= item_price
-    # Assuming you have a relationship set up to track purchased items
-    user.purchased_items.append(item)
-
+    user.coins -= item.price
+    new_user_item = UserItem(user_id=user.id, item_id=item.id, unlocked=True)
+    db.session.add(new_user_item)
     db.session.commit()
 
-    return jsonify({'success': True, 'message': 'Purchase successful!'})
-
-
+    return jsonify({'success': True, 'message': 'Purchase successful!', 'avatarUrl': url_for('static', filename='images/' + item.img)})
 
 @app.route('/dashboard')
 def dashboard():

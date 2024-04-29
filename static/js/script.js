@@ -119,40 +119,80 @@ function convertCanvasEventsToFullCalendarEvents(canvasEvents) {
             start: event['start_at']
         };
     }).filter(event => event.start); // Filter out events without a start date
+
 }
 
-
-$(document).ready(function () {
-    $('.shop-item').click(function () {
+$(document).ready(function() {
+    // Handling the click on shop items to initiate purchase
+    $('.shop-item').click(function() {
+        var itemId = $(this).data('item-id');
         var name = $(this).data('name');
         var price = $(this).data('price');
         var img = $(this).data('img');
+        var isPurchased = $(this).hasClass('purchased');
 
-        $('#purchaseItemImg').attr('src', img);
-        $('#purchaseModalLabel').text('Buy ' + name + '?');
-        $('#purchaseItemPrice').text('Price: ' + price + ' coins');
+        if (!isPurchased) {
+            $('#purchaseItemImg').attr('src', img);
+            $('#purchaseModalLabel').text('Confirm Purchase: ' + name);
+            $('#purchaseItemPrice').text('Price: ' + price + ' coins');
+            $('#confirmPurchase').data('item-id', itemId).data('price', price);
+            $('#purchaseModal').modal('show');
+        }
+    });
 
-        // Setup confirmation button
-        $('#confirmPurchase').off('click').on('click', function () {
-            // Ajax call to server to handle purchase
-            $.ajax({
-                url: '/buy-item',
-                type: 'POST',
-                data: {
-                    name: name,
-                    price: price
-                },
-                success: function (response) {
-                    if (response.success) {
-                        $('#purchaseModal').modal('hide');
-                        alert('Purchase successful!');
-                        // Update coins display, etc.
-                    } else {
-                        alert(response.message);
-                    }
+    // Confirm purchase and update inventory
+    $('#confirmPurchase').on('click', function() {
+        var itemId = $(this).data('item-id');
+        var price = $(this).data('price');
+
+        $.ajax({
+            url: '/buy-item',
+            type: 'POST',
+            data: { item_id: itemId },
+            success: function(response) {
+                if (response.success) {
+                    $('#purchaseModal').modal('hide');
+                    alert('Purchase successful!');
+                    // Optionally reload or dynamically update the page content
+                    addAvatarToInventory(itemId, response.avatarUrl);
+                } else {
+                    alert('Purchase failed: ' + response.message);
                 }
-            });
+            },
+            error: function(xhr) {
+                alert('Error: ' + xhr.statusText);
+            }
         });
     });
-});
 
+    // Add newly purchased avatar to the inventory
+    function addAvatarToInventory(itemId, imgUrl) {
+        var newAvatarMarkup = `<div class="inventory-item" data-item-id="${itemId}" data-img="${imgUrl}" onclick="selectAvatar(${itemId}, '${imgUrl}')">
+                                    <img src="${imgUrl}" alt="Avatar">
+                                    <p>Selected</p>
+                                </div>`;
+        $('#inventory').append(newAvatarMarkup);
+    }
+
+    // Function to handle avatar selection from inventory
+    window.selectAvatar = function(itemId, img) {
+        $.ajax({
+            url: '/set-avatar',
+            type: 'POST',
+            data: { item_id: itemId },
+            success: function(response) {
+                if (response.success) {
+                    $('.user-avatar-large img').attr('src', img);
+                    $('.inventory-item').removeClass('selected');
+                    $(`[data-item-id=${itemId}]`).addClass('selected');
+                    alert('Avatar updated successfully!');
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function(xhr) {
+                alert('Error updating avatar: ' + xhr.responseText);
+            }
+        });
+    };
+});
