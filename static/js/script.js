@@ -156,3 +156,22 @@ $(document).ready(function () {
     });
 });
 
+function applyTheme(theme) {
+    document.documentElement.className = theme;
+}
+
+document.querySelectorAll('input[name="theme"]').forEach(input => {
+    input.addEventListener('change', function() {
+        localStorage.setItem('theme', this.id);
+        applyTheme(this.id);
+    });
+});
+
+window.onload = function() {
+    var theme = localStorage.getItem('theme');
+    if (theme) {
+        document.getElementById(theme).checked = true;
+        applyTheme(theme);
+    }
+};
+

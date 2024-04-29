@@ -44,6 +44,7 @@ html {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
+    background-color: var(--background-bg-color)
 }
 
 /* Header with the centered title */
@@ -63,6 +64,20 @@ header h1 {
     text-align: center;
 }
 
+
+/* Settings Page */
+
+.settings-container {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    width: 100%;
+    margin: 50px auto;
+    color: var(settings-text-color);
+}
+
 /* Menu icon styling */
 .menu-icon {
     cursor: pointer;
@@ -77,8 +92,10 @@ header h1 {
     z-index: 1;
     top: 0;
     left: 0;
-    background-color: #122f5e; /* Softer light blue */
-    color: #8395a7; /* Darker blue for readable contrast */
+    background-color: #122f5e;
+    /* Softer light blue */
+    color: #8395a7;
+    /* Darker blue for readable contrast */
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 60px;
@@ -106,8 +123,9 @@ header h1 {
     position: absolute;
     top: 10px;
     right: 20px;
-    font-family: 'Roboto', sans-serif; /* Roboto font for modern look */
-    color: #f8f9fa; 
+    font-family: 'Roboto', sans-serif;
+    /* Roboto font for modern look */
+    color: #f8f9fa;
 }
 
 .avatar {
@@ -115,6 +133,12 @@ header h1 {
     width: auto;
     border-radius: 50%;
 }
+.avatar-header {
+    color: var(--avatar-header);
+    font-size: 24px; /* Optional: Adjust font size */
+    font-weight: bold; /* Optional: Make text bold */
+}
+
 
 .player-info {
     display: flex;
@@ -348,8 +372,7 @@ header h1 {
 
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f7;
-    /* Light gray background */
+    background-color: var(--bg-color);
     margin: 0;
     padding: 0;
 }
@@ -358,6 +381,7 @@ body {
     max-width: 1100px;
     margin: 40px auto;
     align-self: center;
+    background-color: var(--calendar-bg-color);
 }
 
 #calendar-container {
@@ -366,18 +390,19 @@ body {
     margin: 40px auto;
     /* Center the calendar with margin */
     padding: 15px;
-    background-color: #ffffff;
+    background-color: #f8f5f5;
     /* White background for the calendar */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     /* Adding a subtle shadow */
     border-radius: 8px;
     /* Rounded corners */
+    
 }
 
 .fc-toolbar-title {
     font-size: 24px;
     /* Larger font size for the calendar title */
-    color: #333333;
+    color: var(--toolbar-title-color);
     /* Darker font color for better readability */
 }
 
@@ -409,7 +434,7 @@ body {
 
 .fc-event,
 .fc-event-dot {
-    background-color: #ff5722;
+    background-color: var(--event-color);
     /* A different color for events */
     border: none;
 }
@@ -672,7 +697,7 @@ body {
     /* Hide radio buttons */
 }
 
-.avatar-selection input[type="radio"]:checked + img {
+.avatar-selection input[type="radio"]:checked+img {
     border-color: green;
     /* Border color for selected avatar */
     transform: scale(1.1);
@@ -683,34 +708,44 @@ body {
 .shop-layout {
     display: flex;
     justify-content: space-between;
-    align-items: stretch; /* Make items of equal height */
+    align-items: stretch;
+    /* Make items of equal height */
     margin-top: 20px;
 }
 
 .tabs-container {
     flex: 1;
-    width: 50%; /* Tabs container takes up half the width */
+    width: 50%;
+    /* Tabs container takes up half the width */
 }
 
 .shop-item img {
-    height: 100px; /* Example size, adjust as needed */
-    width: auto; /* Maintain aspect ratio */
+    height: 100px;
+    /* Example size, adjust as needed */
+    width: auto;
+    /* Maintain aspect ratio */
 }
 
 .shop-item p img {
-    height: auto; /* Revert to default for coin images */
-    width: auto;  /* Maintain aspect ratio for coin images */
+    height: auto;
+    /* Revert to default for coin images */
+    width: auto;
+    /* Maintain aspect ratio for coin images */
 }
+
 .user-avatar-large {
     flex: 1;
-    width: 50%; /* Each takes up half of the container's width */
+    width: 50%;
+    /* Each takes up half of the container's width */
     display: flex;
     justify-content: center;
-    align-items: center; /* Center content for better aesthetics */
+    align-items: center;
+    /* Center content for better aesthetics */
 }
 
 .shop-grid {
-    padding-right: 15px; /* Add some spacing between the two columns */
+    padding-right: 15px;
+    /* Add some spacing between the two columns */
 }
 
 
@@ -722,77 +757,95 @@ body {
 
 
 /*To-do List CSS*/
-.todoPageContent{
+.todoPageContent {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.todoHeader{
+.todoHeader {
     margin-bottom: 20px;
     margin-top: 10px;
     text-decoration: underline;
     font-family: Arial, sans-serif;
+    color: var(--todo-header-color);
 }
 
-.todoList{
+.todoList {
     margin-bottom: 100px;
 }
 
-.todoItem{
+.todoItem {
     display: flex;
     flex-direction: row;
     align-items: center;
     font-size: larger;
     font-family: Arial, sans-serif;
-    margin-bottom:2px;
+    margin-bottom: 2px;
 }
 
-.checkButton{
-    margin-right:10px;
+.checkButton {
+    margin-right: 10px;
     height: 50px;
     font-weight: bold;
     font-size: medium;
-    width:50px;
+    width: 50px;
     background-color: white;
 }
 
-.checkButton:hover{
+.checkButton:hover {
     background-color: gainsboro;
 }
 
- .fa-solid{
-    color:#28a745;
+.fa-solid {
+    color: #28a745;
     font-size: xx-large;
- }
+}
 
- .newListButton{
-    width:300px;
+.newListButton {
+    width: 300px;
     height: 50px;
     font-size: large;
     background-color: #007bff;
-    color:white;
-    border:none;
+    color: white;
+    border: none;
     border-radius: 5px;
- }
+}
 
- .newListButton:hover{
+.newListButton:hover {
     background-color: #0056b3;
- }
- 
-/*dashboard elements*/
+}
+
+
+
+:root {
+    --bg-color: #fff;
+    /* Default background color */
+    --text-color: #333;
+    /* Default text color */
+    --link-color: #007bff;
+    /* Default link color */
+    --hover-text-decoration: underline;
+    /* Default hover state */
+    --notification-text-color: #666;
+    /* Default notification text color */
+    --border-color: #eee;
+    /* Default border color */
+}
+
+/* Dashboard elements */
 .rounded {
-    background-color: #fff;
+    background-color: var(--bg-color);
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     margin-top: 20px;
 }
 
 .notification-box h3,
 .task-box h3 {
-    color: #333;
-    border-bottom: 2px solid #eee;
+    color: var(--text-color);
+    border-bottom: 2px solid var(--border-color);
     padding-bottom: 10px;
 }
 
@@ -800,21 +853,158 @@ body {
 .task-box li a {
     padding: 10px 0;
     display: block;
-    color: #666;
+    background-color: var(--bg-color);
+    color: var(--notification-text-color);
 }
 
 .task-box li a {
     text-decoration: none;
-    color: #007bff;
+    color: var(--link-color);
 }
 
 .task-box li a:hover {
-    text-decoration: underline;
+    text-decoration: var(--hover-text-decoration);
 }
 
-.notification-box, .task-box {
-    background-color: #fff;
+.notification-box,
+.task-box {
+    background-color: var(--bg-color);
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
+}
+
+
+.visually-hidden {
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+}
+
+.color-picker>fieldset {
+    border: 0;
+    display: flex;
+    gap: 2rem;
+    width: fit-content;
+    background: fff;
+    padding: 1rem 3rem;
+    margin-inline: auto;
+    border-radius: 0 0 1rem 1rem;
+}
+
+.color-picker input[type="radio"] {
+    appearance: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    outline: 3px solid var(--radio-color, currentColor);
+    border-radius: 50%;
+}
+
+.color-picker input[type="radio"]:checked {
+    background: var(--radio-color);
+}
+
+.color-picker input[type="radio"]#light {
+    --radio-color: gray;
+}
+
+.color-picker input[type="radio"]#pink {
+    --radio-color: #ff69b4;
+}
+
+.color-picker input[type="radio"]#blue {
+    --radio-color: #007bff;
+}
+
+.color-picker input[type="radio"]#green {
+    --radio-color: #28a745;
+}
+
+.color-picker input[type="radio"]#dark {
+    --radio-color: #343a40;
+}
+
+:root:has(#pink:checked) {
+        --bg-color: #ffe4e1; /* Light pink background color */
+        --text-color: #b03060; /* Deeper pink for text for better contrast */
+        --link-color: #ff69b4; /* Brighter pink for links */
+        --hover-text-decoration: none; /* No underline on hover for a change */
+        --notification-text-color: #d16277; /* Softer pink for notifications */
+        --border-color: #ffb6c1; /* Soft pink border */
+        --avatar-header: #d16277; 
+        --background-bg-color: #ffe4e1;
+        --calendar-bg-color: #ffe4e1;
+        --todo-header-color: #d16277;
+        --toolbar-title-color: #d16277;
+        --event-color: #b03060;
+
+
+}
+:root:has(#light:checked) {
+    --bg-color: #ffffff; /* White background color */
+    --text-color: #333333; /* Dark gray for text for better contrast */
+    --link-color: #1a0dab; /* Classic blue for links */
+    --hover-text-decoration: underline; /* Underline on hover */
+    --notification-text-color: #505050; /* Medium gray for notifications */
+    --border-color: #dddddd; /* Light gray border */
+    --avatar-header: #505050; 
+    --background-bg-color: #ffffff;
+    --calendar-bg-color: #ffffff;
+    --todo-header-color: #505050;
+    --toolbar-title-color: #505050;
+    --event-color: #333333;
+
+
+}
+:root:has(#blue:checked) {
+    --bg-color: #e6f0fa; /* Light blue background color */
+    --text-color: #003366; /* Dark blue for text */
+    --link-color: #007bff; /* Bright blue for links */
+    --hover-text-decoration: none; /* No underline on hover */
+    --notification-text-color: #31708f; /* Soft blue for notifications */
+    --border-color: #b0c4de; /* Light steel blue border */
+    --avatar-header: #31708f; 
+    --background-bg-color: #e6f0fa;
+    --calendar-bg-color: #e6f0fa;
+    --todo-header-color: #31708f;
+    --toolbar-title-color: #31708f;
+    --event-color: #003366;
+
+
+}
+:root:has(#green:checked) {
+    --bg-color: #e8f5e9; /* Light mint green background */
+    --text-color: #2e7d32; /* Dark green for text */
+    --link-color: #66bb6a; /* Soft green for links */
+    --hover-text-decoration: none; /* No underline on hover */
+    --notification-text-color: #388e3c; /* Medium green for notifications */
+    --border-color: #c8e6c9; /* Pale green border */
+    --avatar-header: #388e3c; 
+    --background-bg-color: #e8f5e9;
+    --calendar-bg-color: #e8f5e9;
+    --todo-header-color: #388e3c;
+    --toolbar-title-color: #388e3c;
+    --event-color: #2e7d32;
+
+
+}
+:root:has(#dark:checked) {
+    --bg-color: #121212; /* Very dark gray, almost black, for background */
+    --text-color: #e0e0e0; /* Light gray for text */
+    --link-color: #bb86fc; /* Purplish shade for links */
+    --hover-text-decoration: none; /* No underline on hover */
+    --notification-text-color: #b3e5fc; /* Light blue for notifications */
+    --border-color: #424242; /* Dark gray border */
+    --avatar-header: #b3e5fc; 
+    --background-bg-color: #4a3e5f;
+    --calendar-bg-color: #4a3e5f;
+    --todo-header-color: #b3e5fc;
+    --toolbar-title-color: #b3e5fc;
+    --event-color: #b3e5fc;
+
+}
+
