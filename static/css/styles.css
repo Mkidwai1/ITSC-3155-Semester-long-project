@@ -1,11 +1,12 @@
-/*<<<<<<< HEAD:itsc3155-project/static/css/styles.css*/
+
 body,
 html {
     height: 100%;
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    background-color: #f4f4f7;
+    background-color: var(--bg-color);
+    color: var(--text-color);
 }
 
 .background-image::before {
@@ -51,7 +52,7 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #5484d6;
+    background-color: var(--notification-text-color);
     padding: 10px 20px;
     position: relative;
 }
@@ -59,14 +60,15 @@ header {
 header h1 {
     margin: 0;
     flex-grow: 1;
-    color: #f8f9fa;
     text-align: center;
+    color: var(--bg-color)
 }
 
 /* Menu icon styling */
 .menu-icon {
     cursor: pointer;
     font-size: 24px;
+    color: var(--bg-color);
 }
 
 /* Side navigation menu */
@@ -77,8 +79,8 @@ header h1 {
     z-index: 1;
     top: 0;
     left: 0;
-    background-color: #122f5e; /* Softer light blue */
-    color: #8395a7; /* Darker blue for readable contrast */
+    background-color: var(--bg-color);
+    color: var(--link-color);
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 60px;
@@ -89,14 +91,19 @@ header h1 {
     padding: 8px 8px 8px 32px;
     text-decoration: none;
     font-size: 25px;
-    color: white;
+    color: var(--link-color);
     display: block;
     transition: 0.3s;
+    border-left: 3px solid transparent;
 }
 
 /* Hover effect for links */
 .sidenav a:hover {
-    background-color: #575757;
+    background-color: var(--hover-bg-color); /* Lighten or darken on hover, set in your root */
+    color: var(--hover-text-color); /* Make text color change on hover, set in your root */
+    border-left: 3px solid var(--hover-border-color); /* Change border color on hover */
+    transform: scale(1.05); /* Slightly increase the size */
+    transition: all 0.3s ease-in-out; 
 }
 
 /* Profile info in the top right corner */
@@ -107,7 +114,8 @@ header h1 {
     top: 10px;
     right: 20px;
     font-family: 'Roboto', sans-serif; /* Roboto font for modern look */
-    color: #f8f9fa; 
+    color: var(--bg-color);
+    
 }
 
 .avatar {
@@ -120,6 +128,7 @@ header h1 {
     display: flex;
     flex-direction: column;
     margin-left: 10px
+
 }
 
 /* Main content layout */
@@ -137,7 +146,7 @@ header h1 {
 }
 
 .assignment-box {
-    background-color: #ffecd2;
+    background-color: var(--bg-color);
     padding: 10px;
     margin-bottom: 10px;
     border-radius: 5px;
@@ -348,7 +357,7 @@ header h1 {
 
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f7;
+    background-color: var(--bg-color);
     /* Light gray background */
     margin: 0;
     padding: 0;
@@ -373,9 +382,9 @@ body {
     margin: 40px auto;
     /* Center the calendar with margin */
     padding: 15px;
-    background-color: #7c227f;
+    background-color: var(--calendar-bg-color);
     /* White background for the calendar */
-    box-shadow: 0 4px 8px rgba(71, 60, 60, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     /* Adding a subtle shadow */
     border-radius: 8px;
     /* Rounded corners */
@@ -385,14 +394,14 @@ body {
 .fc-toolbar-title {
     font-size: 24px;
     /* Larger font size for the calendar title */
-    color: #333333;
+    color: var(--toolbar-title-color);
     /* Darker font color for better readability */
 }
 
 .fc-button {
     background-color: #4CAF50;
     /* Green background for buttons */
-    color: white;
+    color: var(--button-text-color);
     border: none;
     padding: 10px 15px;
     margin: 5px;
@@ -401,29 +410,29 @@ body {
 }
 
 .fc-button:hover {
-    background-color: #45a049;
+    background-color: var(--button-hover-bg-color);
     /* Darker green on hover */
 }
 
 .fc-button.fc-button-primary {
-    background-color: #007bff;
-    /* Bootstrap primary color for primary buttons */
+    background-color: var(--event-bg-color);
+    color: var(--event-text-color);
 }
 
 .fc-button.fc-button-primary:hover {
-    background-color: #0069d9;
+    background-color: var(--hover-bg-color);
     /* Darker blue on hover */
 }
 
 .fc-event,
 .fc-event-dot {
-    background-color: #ff5722;
+    background-color: var(--event-color);
     /* A different color for events */
     border: none;
 }
 
 .fc-event-title {
-    color: #ffffff;
+    color: inherit;
     /* White text color for event titles */
 }
 
@@ -675,6 +684,12 @@ body {
     /* Smooth transition for border and scale */
 }
 
+.avatar-header {
+    color: var(--avatar-header);
+    font-size: 24px; /* Optional: Adjust font size */
+    font-weight: bold; /* Optional: Make text bold */
+}
+
 .avatar-selection input[type="radio"] {
     display: none;
     /* Hide radio buttons */
@@ -738,7 +753,6 @@ body {
 }
 
 
-
 .user-avatar-large {
     flex: 1;
     width: 50%; /* Each takes up half of the container's width */
@@ -748,21 +762,93 @@ body {
 }
 
 .nav-tabs .nav-link.active {
-    color: #fff;
-    background-color: #007bff;
+    color: var(--text-color);
+    background-color: var(--bg-color);
     border-color: #007bff;
 }
 
+.settings-container {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    width: 100%;
+    margin: 50px auto;
+    color: var(settings-text-color);
+}
 
 /*To-do List CSS*/
-.todoHeader{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 100px;
-    margin-left: 35px;
-    text-decoration: underline;
-}
+
+    .todoPageContent {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+
+    .todoHeader {
+        margin-bottom: 20px;
+        margin-top: 10px;
+        text-decoration: underline;
+        font-family: Arial, sans-serif;
+        color: var(--todo-header-color);
+    }
+    
+
+    .todoList {
+        margin-bottom: 100px;
+    }
+    
+
+    .todoItem {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        font-size: larger;
+        font-family: Arial, sans-serif;
+        margin-bottom:2px;
+        margin-bottom: 2px;
+    }
+
+    .checkButton {
+        margin-right: 10px;
+        height: 50px;
+        font-weight: bold;
+        font-size: medium;
+        width:50px;
+        width: 50px;
+        background-color: white;
+    }
+    
+
+    .checkButton:hover {
+        background-color: gainsboro;
+    }
+    
+
+    .fa-solid {
+        color: #28a745;
+        font-size: xx-large;
+     }
+    
+
+    .newListButton {
+        width: 300px;
+        height: 50px;
+        font-size: large;
+        background-color: #007bff;
+        color:white;
+        border:none;
+        color: white;
+        border: none;
+        border-radius: 5px;
+     }
+    
+
+    .newListButton:hover {
+        background-color: #0056b3;
+     }
 
 .todoItem{
     display: flex;
@@ -776,9 +862,76 @@ body {
     font-size: medium;
 }
 
+/*Chat CSS*/
+
+.chat-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.chat-title {
+    text-align: center;
+    color: #333;
+}
+
+.user-count {
+    font-weight: bold;
+    color: #007bff;
+}
+
+.message-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.message-item {
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #ffffff;
+    border-radius: 5px;
+}
+
+.message-form {
+    margin-top: 20px;
+}
+
+.message-input {
+    width: calc(100% - 80px);
+    padding: 10px;
+    font-size: 16px;
+}
+
+.send-btn {
+    width: 70px;
+    padding: 10px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.send-btn:hover {
+    background-color: #0056b3;
+}
+
+@media (max-width: 600px) {
+    .message-input {
+        width: calc(100% - 60px);
+    }
+
+    .send-btn {
+        width: 50px;
+    }
+}
+
+
 /*dashboard elements*/
+
 .rounded {
-    background-color: #fff;
+    background-color: var(--bg-color);
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
@@ -787,8 +940,8 @@ body {
 
 .notification-box h3,
 .task-box h3 {
-    color: #333;
-    border-bottom: 2px solid #eee;
+    color: var(--link-color);
+    border-bottom: 2px solid var(--border-color);
     padding-bottom: 10px;
 }
 
@@ -796,23 +949,181 @@ body {
 .task-box li a {
     padding: 10px 0;
     display: block;
-    color: #666;
+    color: var(--notification-text-color);
 }
 
 .task-box li a {
     text-decoration: none;
-    color: #007bff;
+    color: var(--link-color);
 }
 
 .task-box li a:hover {
     text-decoration: underline;
+    text-decoration: var(--hover-text-decoration);
 }
 
 .notification-box, .task-box {
-    background-color: #fff;
+    background-color: var(--bg-color);
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 
   
+  .visually-hidden {
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+}
+
+.color-picker>fieldset {
+    border: 0;
+    display: flex;
+    gap: 2rem;
+    width: fit-content;
+    background: fff;
+    padding: 1rem 3rem;
+    margin-inline: auto;
+    border-radius: 0 0 1rem 1rem;
+}
+
+.color-picker input[type="radio"] {
+    appearance: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    outline: 3px solid var(--radio-color, currentColor);
+    border-radius: 50%;
+}
+
+.color-picker input[type="radio"]:checked {
+    background: var(--radio-color);
+}
+
+.color-picker input[type="radio"]#light {
+    --radio-color: gray;
+}
+
+.color-picker input[type="radio"]#pink {
+    --radio-color: #ff69b4;
+}
+
+.color-picker input[type="radio"]#blue {
+    --radio-color: #007bff;
+}
+
+.color-picker input[type="radio"]#green {
+    --radio-color: #28a745;
+}
+
+.color-picker input[type="radio"]#dark {
+    --radio-color: #343a40;
+}
+
+:root {
+    --bg-color: #fff;
+    /* Default background color */
+    --text-color: #333;
+    /* Default text color */
+    --link-color: #007bff;
+    /* Default link color */
+    --hover-bg-color: #cccccc;
+    --hover-text-decoration: underline;
+    /* Default hover state */
+    --notification-text-color: #666;
+    /* Default notification text color */
+    --border-color: #eee;
+    /* Default border color */
+}
+
+:root:has(#pink:checked) {
+        --bg-color: #ffe4e1; /* Light pink background color */
+        --text-color: #b03060; /* Deeper pink for text for better contrast */
+        --link-color: #ff69b4; /* Brighter pink for links */
+        --hover-text-decoration: none; /* No underline on hover for a change */
+        --notification-text-color: #d16277; /* Softer pink for notifications */
+        --border-color: #ffb6c1; /* Soft pink border */
+        --avatar-header: #d16277; 
+        --background-bg-color: #ffe4e1;
+        --calendar-bg-color: #ffe4e1;
+        --todo-header-color: #d16277;
+        --toolbar-title-color: #d16277;
+        --event-color: #b03060;
+
+
+}
+:root:has(#light:checked) {
+    --bg-color: #ffffff; /* White background color */
+    --text-color: #333333; /* Dark gray for text for better contrast */
+    --link-color: #1a0dab; /* Classic blue for links */
+    --hover-text-decoration: underline; /* Underline on hover */
+    --notification-text-color: #505050; /* Medium gray for notifications */
+    --border-color: #dddddd; /* Light gray border */
+    --avatar-header: #505050; 
+    --background-bg-color: #ffffff;
+    --calendar-bg-color: #ffffff;
+    --todo-header-color: #505050;
+    --toolbar-title-color: #505050;
+    --event-color: #333333;
+
+
+}
+:root:has(#blue:checked) {
+    --bg-color: #e6f0fa; /* Light blue background color */
+    --text-color: #003366; /* Dark blue for text */
+    --link-color: #007bff; /* Bright blue for links */
+    --hover-text-decoration: none; /* No underline on hover */
+    --notification-text-color: #31708f; /* Soft blue for notifications */
+    --border-color: #b0c4de; /* Light steel blue border */
+    --avatar-header: #31708f; 
+    --background-bg-color: #e6f0fa;
+    --calendar-bg-color: #e6f0fa;
+    --todo-header-color: #31708f;
+    --toolbar-title-color: #31708f;
+    --event-color: #003366;
+
+
+}
+:root:has(#green:checked) {
+    --bg-color: #e8f5e9; /* Light mint green background */
+    --text-color: #2e7d32; /* Dark green for text */
+    --link-color: #66bb6a; /* Soft green for links */
+    --hover-text-decoration: none; /* No underline on hover */
+    --notification-text-color: #388e3c; /* Medium green for notifications */
+    --border-color: #c8e6c9; /* Pale green border */
+    --avatar-header: #388e3c; 
+    --background-bg-color: #e8f5e9;
+    --calendar-bg-color: #e8f5e9;
+    --todo-header-color: #388e3c;
+    --toolbar-title-color: #388e3c;
+    --event-color: #2e7d32;
+
+
+}
+:root:has(#dark:checked) {
+    --bg-color: #121212; /* Very dark gray, almost black, for background */
+    --text-color: #e0e0e0; /* Light gray for text */
+    --link-color: #bb86fc; /* Purplish shade for links */
+    --hover-text-decoration: none; /* No underline on hover */
+    --hover-bg-color: #333333;
+    --notification-text-color: #b3e5fc; /* Light blue for notifications */
+    --border-color: #424242; /* Dark gray border */
+    --avatar-header: #b3e5fc; 
+    --background-bg-color: #4a3e5f;
+    --calendar-bg-color: #4a3e5f;
+    --todo-header-color: #b3e5fc;
+    --toolbar-title-color: #b3e5fc;
+    --event-color: #b3e5fc;
+
+}
+
+a {
+    color: var(--link-color);
+}
+
+.border-class {
+    border-color: var(--border-color);
+}
