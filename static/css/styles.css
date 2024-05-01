@@ -358,10 +358,13 @@ body {
     max-width: 1100px;
     margin: 40px auto;
     align-self: center;
-    background-color: #ffffff; /* Changes the color of the calendar itself */
+    background-color: #a39a22; /* Changes the color of the calendar itself */
+    
 }
 #canvas-calendar {
-    background-color: #ffffff; /*changes the color of the calendar page*/
+    background-color: #1436bf; /*changes the color of the calendar page*/
+    overflow: hidden;
+    
 }
 
 #calendar-container {
@@ -370,12 +373,13 @@ body {
     margin: 40px auto;
     /* Center the calendar with margin */
     padding: 15px;
-    background-color: #ffffff;
+    background-color: #7c227f;
     /* White background for the calendar */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(71, 60, 60, 0.1);
     /* Adding a subtle shadow */
     border-radius: 8px;
     /* Rounded corners */
+    
 }
 
 .fc-toolbar-title {
