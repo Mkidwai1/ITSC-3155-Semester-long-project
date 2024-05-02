@@ -1,4 +1,4 @@
-/*<<<<<<< HEAD:itsc3155-project/static/css/styles.css*/
+
 body,
 html {
     height: 100%;
@@ -367,10 +367,13 @@ body {
     max-width: 1100px;
     margin: 40px auto;
     align-self: center;
-    background-color: #ffffff; /* Changes the color of the calendar itself */
+    background-color: var(--calendar-bg-color); /* Changes the color of the calendar itself */
+    
 }
 #canvas-calendar {
-    background-color: #ffffff; /*changes the color of the calendar page*/
+    background-color: #1436bf; /*changes the color of the calendar page*/
+    overflow: hidden;
+    
 }
 
 #calendar-container {
@@ -385,6 +388,7 @@ body {
     /* Adding a subtle shadow */
     border-radius: 8px;
     /* Rounded corners */
+    
 }
 
 .fc-toolbar-title {
@@ -858,7 +862,74 @@ body {
     font-size: medium;
 }
 
+/*Chat CSS*/
+
+.chat-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.chat-title {
+    text-align: center;
+    color: var(--chat-title-color);
+}
+
+.user-count {
+    font-weight: bold;
+    color: #007bff;
+}
+
+.message-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.message-item {
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #ffffff;
+    border-radius: 5px;
+}
+
+.message-form {
+    margin-top: 20px;
+}
+
+.message-input {
+    width: calc(100% - 80px);
+    padding: 10px;
+    font-size: 16px;
+}
+
+.send-btn {
+    width: 70px;
+    padding: 10px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.send-btn:hover {
+    background-color: #0056b3;
+}
+
+@media (max-width: 600px) {
+    .message-input {
+        width: calc(100% - 60px);
+    }
+
+    .send-btn {
+        width: 50px;
+    }
+}
+
+
 /*dashboard elements*/
+
 .rounded {
     background-color: var(--bg-color);
     padding: 20px;
@@ -981,6 +1052,8 @@ body {
         --todo-header-color: #d16277;
         --toolbar-title-color: #d16277;
         --event-color: #b03060;
+        --chat-title-color: #d16277;
+
 
 
 }
@@ -997,6 +1070,8 @@ body {
     --todo-header-color: #505050;
     --toolbar-title-color: #505050;
     --event-color: #333333;
+    --chat-title-color: #505050;
+
 
 
 }
@@ -1013,6 +1088,8 @@ body {
     --todo-header-color: #31708f;
     --toolbar-title-color: #31708f;
     --event-color: #003366;
+    --chat-title-color: #31708f;
+
 
 
 }
@@ -1029,12 +1106,14 @@ body {
     --todo-header-color: #388e3c;
     --toolbar-title-color: #388e3c;
     --event-color: #2e7d32;
+    --chat-title-color: #388e3c;
+
 
 
 }
 :root:has(#dark:checked) {
     --bg-color: #121212; /* Very dark gray, almost black, for background */
-    --text-color: #e0e0e0; /* Light gray for text */
+    --text-color: #4a3e5f; /* Light gray for text */
     --link-color: #bb86fc; /* Purplish shade for links */
     --hover-text-decoration: none; /* No underline on hover */
     --hover-bg-color: #333333;
@@ -1046,6 +1125,7 @@ body {
     --todo-header-color: #b3e5fc;
     --toolbar-title-color: #b3e5fc;
     --event-color: #b3e5fc;
+    --chat-title-color: #b3e5fc;
 
 }
 
