@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
 import bcrypt
 from random import randint
-from datetime import date, timedelta, datetime
+from datetime import date, timedelta
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
 from flask import jsonify
 
@@ -162,26 +162,23 @@ def login():
         else:
             flash('Invalid Email or Password. Please try again.')
     return render_template('login.html')
+
 @app.route('/settings', methods=['GET', 'POST'])
 def settings():
-    if 'email' not in session:
-        flash('Please log in to access settings.')
-        return redirect(url_for('login'))
+    if 'email' in session:
+        user = User.query.filter_by(email=session['email']).first()
+        
+        if request.method == 'POST':
+            course_codes = request.form.get('course_codes')
+            course_codes_list = [code.strip() for code in course_codes.split(',') if code.strip()]
+            user.course_codes_list = ','.join(course_codes_list)
+            db.session.commit()
+            flash('Course codes updated successfully. You can now view your Canvas calendar.', 'success')  # Modified to include additional instruction
+            return redirect(url_for('dashboard'))  # Redirect back to the dashboard to show the flash message
 
-    user = User.query.filter_by(email=session['email']).first()
-    if not user:
-        flash('User not found.')
-        return redirect(url_for('dashboard'))
-
-    if request.method == 'POST':
-        course_codes = request.form.get('course_codes')
-        user.course_codes_list = ', '.join([code.strip() for code in course_codes.split(',') if code.strip()])
-        db.session.commit()
-        flash('Course codes updated successfully.')
-        return redirect(url_for('settings'))
-
-    course_codes = user.course_codes_list.split(',') if user.course_codes_list else []
-    return render_template('settings.html', user=user, course_codes=course_codes)
+        return render_template('settings.html', user=user)
+    
+    return redirect(url_for('login'))
 
 @app.route('/canvas-calendar')
 def canvas_calendar():
@@ -328,75 +325,24 @@ def delete(assignmentID):
 
 @app.route('/generateList')
 def add():
+    count = 0
     user = User.query.filter_by(email=session['email']).first()
     course_codes = user.course_codes_list.split(',') if user.course_codes_list else []
     calendar_events = fetch_canvas_calendar_events(user.id, course_codes)
-    
-    weekDays = []
-    day = 1
-    while(day <= 7) :
-        weekDays.append(str(date.today() + timedelta(days=day))[0:10])
-        day = day + 1
-
-    months = []
-    days = []   
-    assignmentNames = []
     for events in calendar_events:
-        duedate = str(events['start_at'])[0:10]
-        if(weekDays.count(duedate) > 0):
-            months.append(int(duedate[5:7]))
-            days.append(int(duedate[8:10]))
-            assignmentNames.append(str(events['title']))
-
-    for i in range(len(assignmentNames)):
-        if(Todo.query.get(i) != None):
-            try:
-                db.session.delete(Todo.query.get(i))
-            except:
-                return 'Could not clear table'
-                
-    for i in range(len(months)):
-        for x in range(len(months)):
-            if(months[i] < months[x]):
-                m = months[i]
-                n = assignmentNames[i]
-                d = days[i]
-                months[i] = months[x]
-                months[x] = m
-                assignmentNames[i] = assignmentNames[x]
-                assignmentNames[x] = n
-                days[i] = days[x]
-                days[x] = d
-
-    for i in range(len(days)):
-        for x in range(len(days)):
-            if(months[i] == months[x]):
-                if(days[i] < days[x]): 
-                    m = months[i]
-                    n = assignmentNames[i]
-                    d = days[i]
-                    months[i] = months[x]
-                    months[x] = m
-                    assignmentNames[i] = assignmentNames[x]
-                    assignmentNames[x] = n
-                    days[i] = days[x]
-                    days[x] = d
-   
-                
-
-    for i in range(len(months)):
-        currentYear = str(date.today())[0:4]
-        stringDate = currentYear + "-" + str(months[i]) + "-" + str(days[i])
-        dueDate = datetime.strptime(stringDate, "%Y-%m-%d")
-        dueDate = dueDate - timedelta(days=1)
-        dueMonth = dueDate.strftime("%b")
-        newAssignment = Todo(assignmentID = i, assignmentName = assignmentNames[i] + " - Due " + dueMonth + " " + str(dueDate)[8:10])
-        try:
-            db.session.add(newAssignment)
-            db.session.commit()
-        except:
-            return 'Could not create to do list'
-
+       if(str(events['start_at'])[0:10] == str(date.today() + timedelta(days=1))[0:10]):
+           if(Todo.query.get(count) != None):
+                try:
+                    db.session.delete(Todo.query.get(count))
+                except:
+                    return 'Could not clear table'
+           newItem = Todo(assignmentID = count, assignmentName = str(events['title']))
+           try:
+               db.session.add(newItem)
+               db.session.commit()
+               count = count + 1
+           except:
+               return 'Could not create to do list'
     return redirect('/todo')
 
 @app.route('/todo')
@@ -418,21 +364,21 @@ def shop():
         return redirect(url_for('login'))
 
     # Fetch all items and check which ones are unlocked
-    all_items = Item.query.filter(Item.img.notin_(['pixelBoy.png', 'pixelGirl.png'])).all()
-    unlocked_items = {ui.item.id for ui in user.user_items if ui.unlocked}
+    all_items = Item.query.all()
+    unlocked_items = {ui.item.id for ui in user.user_items.all() if ui.unlocked}  # use .all() to fetch items
 
     # Mark items as unlocked in the context sent to the template
-    items_for_display = []
-    for item in all_items:
-        items_for_display.append({
-            'id': item.id,
-            'name': item.name,
-            'img': item.img,
-            'price': item.price,
-            'unlocked': item.id in unlocked_items
-        })
+    items_for_display = [{
+        'id': item.id,
+        'name': item.name,
+        'img': item.img,
+        'price': item.price,
+        'unlocked': item.id in unlocked_items
+    } for item in all_items]
+
 
     return render_template('shop.html', user=user, items=items_for_display)
+
 
 @app.route('/inventory')
 def inventory():
@@ -478,6 +424,25 @@ def buy_item():
     db.session.commit()
 
     return jsonify({'success': True, 'message': 'Purchase successful!', 'avatarUrl': url_for('static', filename='images/' + item.img)})
+
+@app.route('/add-coins', methods=['POST'])
+def add_coins():
+    if 'email' not in session:
+        flash("Please log in to update coins.")
+        return redirect(url_for('login'))
+
+    user = User.query.filter_by(email=session['email']).first()
+    if not user:
+        flash("User not found.")
+        return redirect(url_for('login'))
+
+    # Add 100 coins for testing purposes
+    user.coins += 100
+    db.session.commit()
+
+    flash("100 coins have been added to your account.")
+    return redirect(url_for('shop'))  # Redirect back to the shop or wherever appropriate
+
 
 @app.route('/dashboard')
 def dashboard():

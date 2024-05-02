@@ -125,6 +125,14 @@
     </div>
     </div>
 
+    <!-- Temporary Button to Add Coins for Testing -->
+<div>
+    <form action="{{ url_for('add_coins') }}" method="post">
+        <button type="submit" class="btn btn-success">Add 100 Coins</button>
+    </form>
+</div>
+
+
     <!-- Purchase Confirmation Modal -->
     <div class="modal fade" id="purchaseModal" tabindex="-1" role="dialog" aria-labelledby="purchaseModalLabel"
         aria-hidden="true">
