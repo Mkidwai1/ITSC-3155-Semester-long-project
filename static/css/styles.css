@@ -719,7 +719,7 @@ body {
     width: 50%; /* Tabs container takes up half the width */
 }
 
-.shop-item {
+.shop-item, .inventory-item{
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -733,17 +733,17 @@ body {
     cursor: pointer; /* Changes the cursor to a pointer */
 }
 
-.shop-item:hover {
+.shop-item:hover, .inventory-item:hover {
     border-color: #007bff; /* Changes the border color to blue on hover */
 }
 
 
-.shop-item img {
+.shop-item img, .inventory-item img {
     height: 100px; /* Example size, adjust as needed */
     max-width: 100%; /* Maintain aspect ratio */
 }
 
-.shop-item p img {
+.shop-item p img, .inventory-item p img{
     height: auto; /* Revert to default for coin images */
     width: auto;  /* Maintain aspect ratio for coin images */
 }

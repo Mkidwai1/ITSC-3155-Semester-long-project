@@ -119,8 +119,8 @@ function convertCanvasEventsToFullCalendarEvents(canvasEvents) {
             start: event['start_at']
         };
     }).filter(event => event.start); // Filter out events without a start date
-
 }
+
 
 $(document).ready(function() {
     // Handling the click on shop items to initiate purchase
@@ -164,41 +164,43 @@ $(document).ready(function() {
             }
         });
     });
-
-    // Add newly purchased avatar to the inventory
-    function addAvatarToInventory(itemId, imgUrl) {
-        var newAvatarMarkup = `<div class="inventory-item" data-item-id="${itemId}" data-img="${imgUrl}" onclick="selectAvatar(${itemId}, '${imgUrl}')">
-                                    <img src="${imgUrl}" alt="Avatar">
-                                    <p>Selected</p>
-                                </div>`;
-        $('#inventory').append(newAvatarMarkup);
-    }
-
-    // Function to handle avatar selection from inventory
-    window.selectAvatar = function(itemId, img) {
-        $.ajax({
-            url: '/set-avatar',
-            type: 'POST',
-            data: { item_id: itemId },
-            success: function(response) {
-                if (response.success) {
-                    $('.user-avatar-large img').attr('src', img);
-                    $('.inventory-item').removeClass('selected');
-                    $(`[data-item-id=${itemId}]`).addClass('selected');
-                    alert('Avatar updated successfully!');
-                } else {
-                    alert(response.message);
-                }
-            },
-            error: function(xhr) {
-                alert('Error updating avatar: ' + xhr.responseText);
-            }
-        });
-    };
 });
+
+function updateInventory(itemId, imgUrl) {
+    var newAvatarMarkup = `<div class="inventory-item" data-item-id="${itemId}" data-img="${imgUrl}" onclick="selectAvatar(this)">
+                               <img src="${imgUrl}" alt="Avatar">
+                               <p>Selected</p>
+                           </div>`;
+    $('#inventory').append(newAvatarMarkup);
+}
+
+function selectAvatar(element) {
+    var itemId = $(element).data('item-id');
+    $.ajax({
+        url: '/set-avatar',
+        type: 'POST',
+        data: { item_id: itemId },
+        success: function(response) {
+            if (response.success) {
+                $('.user-avatar-large img').attr('src', response.new_avatar);
+                $('.shop-item').removeClass('selected');
+                $(element).addClass('selected');
+                alert('Avatar updated successfully!');
+            } else {
+                alert(response.message);
+            }
+        },
+        error: function() {
+            alert('Error updating avatar. Please try again.');
+        }
+    });
+}
+
+
 function applyTheme(theme) {
     document.documentElement.className = theme;
 }
+
 
 document.querySelectorAll('input[name="theme"]').forEach(input => {
     input.addEventListener('change', function() {
@@ -207,6 +209,7 @@ document.querySelectorAll('input[name="theme"]').forEach(input => {
     });
 });
 
+
 window.onload = function() {
     var theme = localStorage.getItem('theme');
     if (theme) {
@@ -214,4 +217,3 @@ window.onload = function() {
         applyTheme(theme);
     }
 };
-

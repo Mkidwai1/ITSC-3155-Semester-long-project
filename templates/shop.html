@@ -16,8 +16,7 @@
     <div class="menu-icon" onmouseover="openNav()" onmouseout="closeNav()">&#9776;</div>
     <h1>PixelPlanner</h1>
     <div class="profile-info">
-        <img src="{{ url_for('static', filename='images/' + user.avatar) }}" alt="User Avatar"
-            alt="Player Avatar" class="avatar">
+        <img src="{{ url_for('static', filename='images/' + user.avatar) }}" alt="User Avatar" class="avatar">
 
         <div class="player-info">
             <span class="player-name">{{session.get('user_name', 'Guest')}}</span>
@@ -56,56 +55,74 @@
             </ul>
             <div class="tab-content">
                 <div id="inventory" class="container tab-pane fade"><br>
-                    {% for avatar in user_avatars %}
-                    <div class="inventory-item {{ 'selected' if user.avatar == avatar.img else '' }}"
-                         data-item-id="{{ avatar.item_id }}"
-                         data-img="{{ url_for('static', filename='images/' + avatar.img) }}">
-                        <img src="{{ url_for('static', filename='images/' + avatar.img) }}" alt="{{ avatar.name }}">
-                        <p>{{ avatar.name }}</p>
+                    <div class="shop-grid">
+                        {% for user_item in user.user_items if user_item.unlocked %}
+                        <div class="inventory-item {{ 'selected' if user.avatar == user_item.item.img else '' }}"
+                            data-item-id="{{ user_item.item.id }}" data-name="{{ user_item.item.name }}"
+                            data-img="{{ url_for('static', filename='images/' + user_item.item.img) }}"
+                            onclick="setAvatar(this)">
+                            <img src="{{ url_for('static', filename='images/' + user_item.item.img) }}"
+                                alt="{{ user_item.item.name }}">
+                            <p>{{ user_item.item.name }}</p>
+                        </div>
+                        {% else %}
+                        <p>You have no items in your inventory.</p>
+                        {% endfor %}
                     </div>
-                    {% else %}
-                    <p>You have no items in your inventory.</p>
-                    {% endfor %}
                 </div>
-                           
+
+
+
                 <div id="avatars" class="container tab-pane active"><br>
                     <div class="shop-grid">
-                    {% for item in items %}
-                    <div class="shop-item {{ 'purchased' if item.unlocked else '' }}"
-                         data-item-id="{{ item.id }}" data-name="{{ item.name }}"
-                         data-price="{{ item.price }}" data-img="{{ url_for('static', filename='images/' + item.img) }}">
-                        <img src="{{ url_for('static', filename='images/' + item.img) }}" alt="{{ item.name }}">
-                        <p>{{ item.price }} <img src="{{ url_for('static', filename='images/coin.png') }}" alt="Coin"></p>
+                        {% for item in items %}
+                        <div class="shop-item {{ 'purchased' if item.unlocked else '' }}" data-item-id="{{ item.id }}"
+                            data-name="{{ item.name }}" data-price="{{ item.price }}"
+                            data-img="{{ url_for('static', filename='images/' + item.img) }}">
+                            <img src="{{ url_for('static', filename='images/' + item.img) }}" alt="{{ item.name }}">
+                            <p>{{ item.price }} <img src="{{ url_for('static', filename='images/coin.png') }}"
+                                    alt="Coin"></p>
+                        </div>
+
+                        {% endfor %}
                     </div>
-                
-                    {% endfor %}
                 </div>
-                </div>
-                
-                
+
+
                 <div id="themes" class="container tab-pane fade"><br>
                     <div class="theme-unlock-section">
                         <h3>Unlock All Themes</h3>
-                        <p>Unlock all theme colors for a one-time fee of 500 coins. You can select your theme in your dashboard!</p>
+                        <p>Unlock all theme colors for a one-time fee of 500 coins. You can select your theme in your
+                            dashboard!</p>
                         <div class="theme-colors d-flex justify-content-around">
-                            <div class="theme-sample" style="background-color: #ffe4e1; height: 50px; width: 50px; border-radius: 50%;"></div> <!-- Pink -->
-                            <div class="theme-sample" style="background-color: #e6f0fa; height: 50px; width: 50px; border-radius: 50%;"></div> <!-- Blue -->
-                            <div class="theme-sample" style="background-color: #e8f5e9; height: 50px; width: 50px; border-radius: 50%;"></div> <!-- Green -->
-                            <div class="theme-sample" style="background-color: #121212; height: 50px; width: 50px; border-radius: 50%; color: #fff;">Dark</div> <!-- Dark -->
-                            <div class="theme-sample" style="background-color: #ffffff; height: 50px; width: 50px; border-radius: 50%; border: 1px solid #ccc;">Light</div> <!-- Light -->
+                            <div class="theme-sample"
+                                style="background-color: #ffe4e1; height: 50px; width: 50px; border-radius: 50%;"></div>
+                            <!-- Pink -->
+                            <div class="theme-sample"
+                                style="background-color: #e6f0fa; height: 50px; width: 50px; border-radius: 50%;"></div>
+                            <!-- Blue -->
+                            <div class="theme-sample"
+                                style="background-color: #e8f5e9; height: 50px; width: 50px; border-radius: 50%;"></div>
+                            <!-- Green -->
+                            <div class="theme-sample"
+                                style="background-color: #121212; height: 50px; width: 50px; border-radius: 50%; color: #fff;">
+                                Dark</div> <!-- Dark -->
+                            <div class="theme-sample"
+                                style="background-color: #ffffff; height: 50px; width: 50px; border-radius: 50%; border: 1px solid #ccc;">
+                                Light</div> <!-- Light -->
                         </div>
                         <button class="btn btn-success mt-3" onclick="unlockAllThemes()">Unlock for 500 Coins</button>
                     </div>
-                </div>                
+                </div>
             </div>
         </div>
-        </div>
+    </div>
 
-        <div class="user-avatar-large">
-            <img src="{{ url_for('static', filename='images/' + user.avatar) }}" alt="User Avatar">
+    <div class="user-avatar-large">
+        <img src="{{ url_for('static', filename='images/' + user.avatar) }}" alt="User Avatar">
 
-            <!-- Additional details for the selected avatar can go here -->
-        </div>
+        <!-- Additional details for the selected avatar can go here -->
+    </div>
     </div>
 
     <!-- Purchase Confirmation Modal -->

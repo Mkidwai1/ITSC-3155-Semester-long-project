@@ -8,6 +8,12 @@ from datetime import date, timedelta
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
 from flask import jsonify
 
+shop_items = {
+    'avatars': [
+        {'item_id': 1, 'name': 'PixelGirl', 'price': 10, 'img': 'pixelGirl.png', 'unlocked': True},
+        {'item_id': 2, 'name': 'PixelBoy', 'price': 10, 'img': 'pixelBoy.png', 'unlocked': True},
+    ],
+}
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
@@ -56,12 +62,6 @@ class Item(db.Model):
 
     def __repr__(self):
         return f'<Item {self.name}>'
-    
-shop_items = {
-    1: {'name': 'PixelGirl', 'price': 10, 'img': 'pixelGirl.png', 'unlocked': False},
-    2: {'name': 'PixelBoy', 'price': 10, 'img': 'pixelBoy.png', 'unlocked': True},  # Default unlocked
-    # Additional items...
-}
 
 
 class UserItem(db.Model):
@@ -133,6 +133,14 @@ def register():
         new_user = User(email=email, password=password, name=name, canvas_api_key=canvas_api_key, avatar=avatar, coins=coins)
         db.session.add(new_user)
         db.session.commit()
+
+        # Automatically unlock default avatars for the new user
+        default_avatars = Item.query.filter(Item.img.in_(['pixelBoy.png', 'pixelGirl.png'])).all()
+        for avatar_item in default_avatars:
+            user_item = UserItem(user_id=new_user.id, item_id=avatar_item.id, unlocked=True)
+            db.session.add(user_item)
+        db.session.commit()
+
         flash('Registration successful. Please log in.')
         return redirect(url_for('login'))
 
@@ -276,18 +284,29 @@ def fetch_canvas_calendar_events(user_id, course_codes):
     
 @app.route('/set-avatar', methods=['POST'])
 def set_avatar():
-        if 'email' not in session:
-            return jsonify({'success': False, 'message': 'Please log in first.'}), 401
-        user = User.query.filter_by(email=session['email']).first()
-        item_id = request.form.get('item_id', type=int)
-        user_item = UserItem.query.filter_by(user_id=user.id, item_id=item_id).first()
-        if not user_item or not user_item.unlocked:
-            return jsonify({'success': False, 'message': 'Avatar not unlocked or does not exist.'}), 404
-        UserItem.query.filter(UserItem.user_id == user.id).update({'active': False})
-        user_item.active = True
-        db.session.commit()
-        return jsonify({'success': True, 'message': 'Avatar set successfully!', 'new_avatar': url_for('static', filename='images/' + user_item.item.img)})
+    if 'email' not in session:
+        return jsonify({'success': False, 'message': 'Please log in first.'}), 401
 
+    user = User.query.filter_by(email=session['email']).first()
+    if not user:
+        return jsonify({'success': False, 'message': 'User not found.'}), 404
+
+    item_id = request.form.get('item_id', type=int)
+    if not item_id:
+        return jsonify({'success': False, 'message': 'Invalid item.'}), 400
+
+    user_item = UserItem.query.filter_by(user_id=user.id, item_id=item_id).first()
+    if not user_item or not user_item.unlocked:
+        return jsonify({'success': False, 'message': 'Avatar not unlocked or does not exist.'}), 404
+
+    # Set the new avatar image path
+    item = Item.query.get(item_id)
+    if item:
+        user.avatar = item.img
+        db.session.commit()
+        return jsonify({'success': True, 'message': 'Avatar updated successfully!', 'new_avatar': url_for('static', filename='images/' + item.img)})
+    else:
+        return jsonify({'success': False, 'message': 'Item not found.'}), 404
 
 @app.route('/delete/<int:assignmentID>')
 def delete(assignmentID):
@@ -332,14 +351,6 @@ def todo():
     tasks = Todo.query.all()
     return render_template('todo.html', assignments = tasks, user=user)
 
-# Global definition
-shop_items = {
-    'avatars': [
-        {'item_id': 1, 'name': 'PixelGirl', 'price': 10, 'img': 'pixelGirl.png', 'unlocked': True},
-        {'item_id': 2, 'name': 'PixelBoy', 'price': 10, 'img': 'pixelBoy.png', 'unlocked': True},
-    ],
-    'themes': []
-}
 
 @app.route('/shop')
 def shop():
@@ -353,7 +364,7 @@ def shop():
         return redirect(url_for('login'))
 
     # Fetch all items and check which ones are unlocked
-    all_items = Item.query.all()
+    all_items = Item.query.filter(Item.img.notin_(['pixelBoy.png', 'pixelGirl.png'])).all()
     unlocked_items = {ui.item.id for ui in user.user_items if ui.unlocked}
 
     # Mark items as unlocked in the context sent to the template
@@ -368,6 +379,23 @@ def shop():
         })
 
     return render_template('shop.html', user=user, items=items_for_display)
+
+@app.route('/inventory')
+def inventory():
+    if 'email' not in session:
+        flash('Please log in to view your inventory.')
+        return redirect(url_for('login'))
+
+    user = User.query.filter_by(email=session['email']).first()
+    if not user:
+        flash('User not found.')
+        return redirect(url_for('login'))
+
+    # Fetching user items that are unlocked
+    user_items = UserItem.query.filter_by(user_id=user.id, unlocked=True).all()
+
+    return render_template('shop.html', user=user, user_items=user_items)
+
 
 
 @app.route('/buy-item', methods=['POST'])
