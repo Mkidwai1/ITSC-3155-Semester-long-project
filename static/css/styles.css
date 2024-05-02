@@ -367,7 +367,7 @@ body {
     max-width: 1100px;
     margin: 40px auto;
     align-self: center;
-    background-color: #a39a22; /* Changes the color of the calendar itself */
+    background-color: var(--calendar-bg-color); /* Changes the color of the calendar itself */
     
 }
 #canvas-calendar {
@@ -872,7 +872,7 @@ body {
 
 .chat-title {
     text-align: center;
-    color: #333;
+    color: var(--chat-title-color);
 }
 
 .user-count {
@@ -1052,6 +1052,8 @@ body {
         --todo-header-color: #d16277;
         --toolbar-title-color: #d16277;
         --event-color: #b03060;
+        --chat-title-color: #d16277;
+
 
 
 }
@@ -1068,6 +1070,8 @@ body {
     --todo-header-color: #505050;
     --toolbar-title-color: #505050;
     --event-color: #333333;
+    --chat-title-color: #505050;
+
 
 
 }
@@ -1084,6 +1088,8 @@ body {
     --todo-header-color: #31708f;
     --toolbar-title-color: #31708f;
     --event-color: #003366;
+    --chat-title-color: #31708f;
+
 
 
 }
@@ -1100,12 +1106,14 @@ body {
     --todo-header-color: #388e3c;
     --toolbar-title-color: #388e3c;
     --event-color: #2e7d32;
+    --chat-title-color: #388e3c;
+
 
 
 }
 :root:has(#dark:checked) {
     --bg-color: #121212; /* Very dark gray, almost black, for background */
-    --text-color: #e0e0e0; /* Light gray for text */
+    --text-color: #4a3e5f; /* Light gray for text */
     --link-color: #bb86fc; /* Purplish shade for links */
     --hover-text-decoration: none; /* No underline on hover */
     --hover-bg-color: #333333;
@@ -1117,6 +1125,7 @@ body {
     --todo-header-color: #b3e5fc;
     --toolbar-title-color: #b3e5fc;
     --event-color: #b3e5fc;
+    --chat-title-color: #b3e5fc;
 
 }
 
