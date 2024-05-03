@@ -1136,3 +1136,12 @@ a {
 .border-class {
     border-color: var(--border-color);
 }
+.locked-feature-notice {
+    color: #ff0000; /* Red text color for emphasis */
+    font-weight: bold; /* Make the text bold */
+    padding: 10px;
+    background-color: #ffecec; /* Light red background */
+    border: 1px solid #ffcccc; /* Soft red border */
+    border-radius: 5px; /* Rounded corners */
+    text-align: center; /* Center-align text */
+}

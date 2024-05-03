@@ -208,6 +208,25 @@ document.querySelectorAll('input[name="theme"]').forEach(input => {
         applyTheme(this.id);
     });
 });
+function unlockAllThemes() {
+    $.ajax({
+        url: "/unlock-color-picker",
+        type: "POST",
+        success: function(response) {
+            if (response.success) {
+                alert('Themes unlocked successfully!');
+                window.location.reload(); // Reload the page to reflect changes
+            } else {
+                alert('Failed to unlock themes: ' + response.message);
+            }
+        },
+        error: function(xhr) {
+            // Handling errors when the request itself fails
+            alert('Failed to unlock themes. Error: ' + xhr.responseText);
+        }
+    });
+}
+
 
 
 window.onload = function() {

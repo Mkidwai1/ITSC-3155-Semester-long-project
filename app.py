@@ -39,17 +39,20 @@ class User(db.Model):
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(100))
     canvas_api_key = db.Column(db.String(255))
-    course_codes_list = db.Column(db.String(255))  # New field for storing course codes
+    course_codes_list = db.Column(db.String(255))
     avatar = db.Column(db.String(255))
     coins = db.Column(db.Integer)
+    color_picker_unlocked = db.Column(db.Boolean, default=False)  # New field
 
-    def __init__(self, email, password, name, canvas_api_key, avatar, coins):
+    def __init__(self, email, password, name, canvas_api_key, avatar, coins, color_picker_unlocked=False):
         self.name = name
         self.email = email
         self.password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         self.canvas_api_key = canvas_api_key
         self.avatar = avatar
         self.coins = coins
+        self.color_picker_unlocked = color_picker_unlocked  # Initialize with default value
+
 
     def check_password(self, password):
         return bcrypt.checkpw(password.encode('utf-8'), self.password.encode('utf-8'))
@@ -533,6 +536,23 @@ def chat():
 @socketio.on('message')
 def handle_message(msg):
     send(msg, broadcast=True)
+@app.route('/unlock-color-picker', methods=['POST'])
+def unlock_color_picker():
+    if 'email' not in session:
+        return jsonify({'success': False, 'message': 'Please log in to access this feature.'}), 401
+
+    user = User.query.filter_by(email=session['email']).first()
+    if not user:
+        return jsonify({'success': False, 'message': 'User not found.'}), 404
+
+    if user.coins < 500:
+        return jsonify({'success': False, 'message': 'Not enough coins to unlock the Color-Picker.'}), 400
+
+    user.coins -= 500
+    user.color_picker_unlocked = True
+    db.session.commit()
+    return jsonify({'success': True, 'message': 'Color-Picker unlocked successfully!'})
+
     
 if __name__ == '__main__':
     socketio.run(app, debug=True)

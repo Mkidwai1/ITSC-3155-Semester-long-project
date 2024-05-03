@@ -21,32 +21,25 @@
         </div>
 </header>
 
-   
-<form class="color-picker" 
-action="">
-  <fieldset>
-    <legend class="visually-hidden"> Pick a color scheme</legend>
-    <label for ="light" class="visually-hidden"> Light Theme</label>
-    <input type="radio" 
-    name="theme" id="light" checked>
-    
-    <label for ="pink" class="visually-hidden"> Pink Theme</label>
-    <input type="radio" 
-    name="theme" id="pink" checked>
-
-    <label for ="blue" class="visually-hidden"> Blue Theme</label>
-    <input type="radio" 
-    name="theme" id="blue" checked>
-
-    <label for ="green" class="visually-hidden"> Green</label>
-    <input type="radio" 
-    name="theme" id="green" checked>
-
-    <label for ="dark" class="visually-hidden"> Dark</label>
-    <input type="radio" 
-    name="theme" id="dark" checked>
-  </fieldset>
+{% if user.color_picker_unlocked %}
+<form class="color-picker">
+    <fieldset>
+        <legend class="visually-hidden">Pick a color scheme</legend>
+        <label for="light" class="visually-hidden">Light Theme</label>
+        <input type="radio" name="theme" id="light" checked>
+        <label for="pink" class="visually-hidden">Pink Theme</label>
+        <input type="radio" name="theme" id="pink">
+        <label for="blue" class="visually-hidden">Blue Theme</label>
+        <input type="radio" name="theme" id="blue">
+        <label for="green" class="visually-hidden">Green</label>
+        <input type="radio" name="theme" id="green">
+        <label for="dark" class="visually-hidden">Dark</label>
+        <input type="radio" name="theme" id="dark">
+    </fieldset>
 </form>
+{% else %}
+<p class="locked-feature-notice">Visit the Shop to Unlock Themes</p>
+{% endif %}
 
 <body>
     <div id="navbar" class="sidenav" onmouseover="openNav()" onmouseout="closeNav()">
