@@ -165,7 +165,6 @@ def login():
         else:
             flash('Invalid Email or Password. Please try again.')
     return render_template('login.html')
-
 @app.route('/settings', methods=['GET', 'POST'])
 def settings():
     if 'email' in session:
@@ -176,10 +175,12 @@ def settings():
             course_codes_list = [code.strip() for code in course_codes.split(',') if code.strip()]
             user.course_codes_list = ','.join(course_codes_list)
             db.session.commit()
-            flash('Course codes updated successfully. You can now view your Canvas calendar.', 'success')  # Modified to include additional instruction
-            return redirect(url_for('dashboard'))  # Redirect back to the dashboard to show the flash message
+            flash('Course codes updated successfully.', 'success')
+            return redirect(url_for('dashboard'))
 
-        return render_template('settings.html', user=user)
+        # Fetching the current user's course codes to display
+        course_codes = user.course_codes_list.split(',') if user.course_codes_list else []
+        return render_template('settings.html', user=user, course_codes=course_codes)
     
     return redirect(url_for('login'))
 
