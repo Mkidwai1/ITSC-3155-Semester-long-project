@@ -21,6 +21,8 @@
             <span class="player-name">{{session.get('user_name', 'Guest')}}</span>
             <span class="player-coins"><img src="{{ url_for('static', filename='images/coin.png') }}" alt="Coin"> {{
                 user.coins }}</span>
+
+        </div>
 </header>
 
 {% if user.color_picker_unlocked %}
