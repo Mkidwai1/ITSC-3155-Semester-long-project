@@ -368,7 +368,7 @@ def shop():
 
     # Fetch all items and check which ones are unlocked
     all_items = Item.query.all()
-    unlocked_items = {ui.item.id for ui in user.user_items.all() if ui.unlocked}  # use .all() to fetch items
+    unlocked_items = {ui.item.id for ui in user.user_items if ui.unlocked}  # use .all() to fetch items
 
     # Mark items as unlocked in the context sent to the template
     items_for_display = [{
