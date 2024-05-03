@@ -199,39 +199,26 @@ $(document).ready(function() {
 });
 
 
-
-function applyTheme(theme) {
-    document.documentElement.className = theme;
-}
-
-
-document.querySelectorAll('input[name="theme"]').forEach(input => {
-    input.addEventListener('change', function() {
-        localStorage.setItem('theme', this.id);
-        applyTheme(this.id);
-    });
-});
-
 function unlockAllThemes() {
     $.ajax({
-        url: "/unlock-color-picker",
+        url: "/unlock-color-picker", // Ensure this URL is correct
         type: "POST",
         success: function(response) {
             if (response.success) {
                 alert('Themes unlocked successfully!');
-                window.location.reload(); // Reload the page to reflect changes
+                $('.color-picker fieldset').removeAttr('disabled'); // Enable the color picker
+                window.location.reload(); // Optional: Reload the page to reflect changes
             } else {
                 alert('Failed to unlock themes: ' + response.message);
             }
         },
         error: function(xhr) {
-            // Handling errors when the request itself fails
             alert('Failed to unlock themes. Error: ' + xhr.responseText);
         }
     });
 }
 
-
+// Apply theme from local storage on load
 window.onload = function() {
     var theme = localStorage.getItem('theme');
     if (theme) {
@@ -239,3 +226,18 @@ window.onload = function() {
         applyTheme(theme);
     }
 };
+
+// Function to apply the selected theme
+function applyTheme(theme) {
+    document.documentElement.className = theme;
+}
+
+// Event listeners for theme radio buttons
+document.querySelectorAll('input[name="theme"]').forEach(input => {
+    input.addEventListener('change', function() {
+        if (!this.parentNode.hasAttribute('disabled')) {
+            localStorage.setItem('theme', this.id);
+            applyTheme(this.id);
+        }
+    });
+});

@@ -1145,3 +1145,7 @@ a {
     border-radius: 5px; /* Rounded corners */
     text-align: center; /* Center-align text */
 }
+.color-picker fieldset[disabled] {
+    opacity: 0.5; /* Make it look disabled */
+    pointer-events: none; /* Prevent interactions */
+}
