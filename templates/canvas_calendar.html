@@ -27,12 +27,15 @@
   <header>
     <div class="menu-icon" onmouseover="openNav()" onmouseout="closeNav()">&#9776;</div>
     <h1>PixelPlanner</h1>
-  <div class="profile-info">
-    <img src="{{ url_for('static', filename='images/pixelAvatar.png') }}" alt="Player Avatar" class="avatar">
-    <div class="player-info">
-        <span class="player-name">{{session.get('user_name', 'Guest')}}</span>
-        <span class="player-coins"><img src="{{ url_for('static', filename='images/coin.png') }}" alt="Coin">Coins: {{ user.coins }}</span> 
+    <div class="profile-info">
+        <img src="{{ url_for('static', filename='images/' + user.avatar) }}" alt="User Avatar" class="avatar">
+
+        <div class="player-info">
+            <span class="player-name">{{session.get('user_name', 'Guest')}}</span>
+            <span class="player-coins"><img src="{{ url_for('static', filename='images/coin.png') }}" alt="Coin"> {{
+                user.coins }}</span>
 </header>
+
 {% if user.color_picker_unlocked %}
 <form class="color-picker">
     <fieldset>

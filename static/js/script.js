@@ -174,27 +174,30 @@ function updateInventory(itemId, imgUrl) {
     $('#inventory').append(newAvatarMarkup);
 }
 
-function selectAvatar(element) {
-    var itemId = $(element).data('item-id');
-    $.ajax({
-        url: '/set-avatar',
-        type: 'POST',
-        data: { item_id: itemId },
-        success: function(response) {
-            if (response.success) {
-                $('.user-avatar-large img').attr('src', response.new_avatar);
-                $('.shop-item').removeClass('selected');
-                $(element).addClass('selected');
-                alert('Avatar updated successfully!');
-            } else {
-                alert(response.message);
+$(document).ready(function() {
+    $('.inventory-item').click(function() {
+        const itemId = $(this).data('item-id');
+        $.ajax({
+            url: '/set-avatar',
+            type: 'POST',
+            data: { item_id: itemId },
+            success: function(response) {
+                if (response.success) {
+                    $('.inventory-item').removeClass('selected');  // Remove the class from all items
+                    $(this).addClass('selected');  // Add the class to the selected item
+                    window.location.reload();
+                    alert(response.message);
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function() {
+                alert('Error updating avatar. Please try again.');
             }
-        },
-        error: function() {
-            alert('Error updating avatar. Please try again.');
-        }
+        });
     });
-}
+});
+
 
 
 function applyTheme(theme) {
@@ -208,25 +211,6 @@ document.querySelectorAll('input[name="theme"]').forEach(input => {
         applyTheme(this.id);
     });
 });
-function unlockAllThemes() {
-    $.ajax({
-        url: "/unlock-color-picker",
-        type: "POST",
-        success: function(response) {
-            if (response.success) {
-                alert('Themes unlocked successfully!');
-                window.location.reload(); // Reload the page to reflect changes
-            } else {
-                alert('Failed to unlock themes: ' + response.message);
-            }
-        },
-        error: function(xhr) {
-            // Handling errors when the request itself fails
-            alert('Failed to unlock themes. Error: ' + xhr.responseText);
-        }
-    });
-}
-
 
 
 window.onload = function() {

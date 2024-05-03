@@ -77,8 +77,7 @@
                         {% for user_item in user.user_items if user_item.unlocked %}
                         <div class="inventory-item {{ 'selected' if user.avatar == user_item.item.img else '' }}"
                             data-item-id="{{ user_item.item.id }}" data-name="{{ user_item.item.name }}"
-                            data-img="{{ url_for('static', filename='images/' + user_item.item.img) }}"
-                            onclick="setAvatar(this)">
+                            data-img="{{ url_for('static', filename='images/' + user_item.item.img) }}">
                             <img src="{{ url_for('static', filename='images/' + user_item.item.img) }}"
                                 alt="{{ user_item.item.name }}">
                             <p>{{ user_item.item.name }}</p>
