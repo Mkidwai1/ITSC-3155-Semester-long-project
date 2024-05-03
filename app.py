@@ -42,7 +42,9 @@ class User(db.Model):
     course_codes_list = db.Column(db.String(255))
     avatar = db.Column(db.String(255))
     coins = db.Column(db.Integer)
-    color_picker_unlocked = db.Column(db.Boolean, default=False)  # New field
+    color_picker_unlocked = db.Column(db.Boolean, default=False)
+    
+    user_items = db.relationship('UserItem', backref='user', lazy=True, cascade="all, delete, delete-orphan")
 
     def __init__(self, email, password, name, canvas_api_key, avatar, coins, color_picker_unlocked=False):
         self.name = name
@@ -71,10 +73,8 @@ class UserItem(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     item_id = db.Column(db.Integer, db.ForeignKey('item.id'), primary_key=True)
     unlocked = db.Column(db.Boolean, default=False)
-
-    user = db.relationship('User', backref=db.backref('user_items', lazy='dynamic'))
-    item = db.relationship('Item', backref=db.backref('user_items', lazy='dynamic'))
-
+    
+    item = db.relationship('Item', backref='user_items', lazy=True)
 
 class Todo(db.Model):
     assignmentID = db.Column(db.Integer, primary_key=True)
