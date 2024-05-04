@@ -778,7 +778,7 @@ body {
     color: var(settings-text-color);
 }
 
-/*To-do List CSS*/
+/*To-Do List CSS*/
 
     .todoPageContent {
         display: flex;
@@ -786,7 +786,6 @@ body {
         align-items: center;
     }
     
-
     .todoHeader {
         margin-bottom: 20px;
         margin-top: 10px;
@@ -794,12 +793,16 @@ body {
         font-family: Arial, sans-serif;
         color: var(--todo-header-color);
     }
-    
 
+    .todoSubheading {
+        margin-bottom: 20px;
+        font-size: large;
+        font-weight: bold;
+    }
+    
     .todoList {
         margin-bottom: 100px;
     }
-    
 
     .todoItem {
         display: flex;
@@ -821,18 +824,15 @@ body {
         background-color: white;
     }
     
-
     .checkButton:hover {
         background-color: gainsboro;
     }
     
-
     .fa-solid {
         color: #28a745;
         font-size: xx-large;
      }
     
-
     .newListButton {
         width: 300px;
         height: 50px;
@@ -845,7 +845,6 @@ body {
         border-radius: 5px;
      }
     
-
     .newListButton:hover {
         background-color: #0056b3;
      }

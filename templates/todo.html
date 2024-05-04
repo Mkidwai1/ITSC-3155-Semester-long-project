@@ -59,6 +59,7 @@
     </div>
     <div class="todoPageContent">
         <h1 class="todoHeader">To Do</h1>
+        <h4 class="todoSubheading">Check off Assignments to Earn Coins!</h4>
         <ul class="todoList">
             {% for assignment in assignments %}
                 <li class="todoItem"><a href="/delete/{{assignment.assignmentID}}"><button class="checkButton"><i class="fa-solid fa-check"></i></button></a><p>{{ assignment }}</p></li>

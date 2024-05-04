@@ -319,7 +319,7 @@ def delete(assignmentID):
     try:
         if(user.coins == None):
             user.coins = 0
-        user.coins = user.coins + 10
+        user.coins = user.coins + 25
         db.session.delete(assignment_to_delete)
         db.session.commit()
         return redirect('/todo')
@@ -349,7 +349,7 @@ def add():
             days.append(int(duedate[8:10]))
             assignmentNames.append(str(events['title']))
 
-    for i in range(len(assignmentNames)):
+    for i in range(len(assignmentNames)+1):
         if(Todo.query.get(i) != None):
             try:
                 db.session.delete(Todo.query.get(i))
