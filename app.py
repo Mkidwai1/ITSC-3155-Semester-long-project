@@ -413,6 +413,10 @@ def add():
 
 @app.route('/todo')
 def todo():
+    if 'email' not in session:
+        flash('Please log in to access the dashboard.')
+        return redirect(url_for('login'))
+        
     user = User.query.filter_by(email=session['email']).first()
     tasks = Todo.query.all()
     return render_template('todo.html', assignments = tasks, user=user)
@@ -522,8 +526,12 @@ def dashboard():
         flash('User not found.')
         return redirect(url_for('login'))
 
+    # Fetch all tasks
+    tasks = Todo.query.all()
     # Fetch the last 10 messages
     messages = ChatMessage.query.order_by(ChatMessage.timestamp.desc()).limit(10).all()
+
+
     return render_template('dashboard.html', user=user, messages=messages)
 
 
