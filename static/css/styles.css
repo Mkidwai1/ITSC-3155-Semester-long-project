@@ -1036,6 +1036,8 @@ body {
     /* Default notification text color */
     --border-color: #eee;
     /* Default border color */
+    --event-color: #666;
+
 }
 
 :root:has(#pink:checked) {
