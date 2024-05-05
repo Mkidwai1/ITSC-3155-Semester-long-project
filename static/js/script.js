@@ -13,91 +13,141 @@ function closeNav() {
 //debugging check to see if calendar loads properly
 console.log('FullCalendar is:', typeof FullCalendar !== 'undefined' ? 'Loaded' : 'Not loaded');
 
-document.addEventListener('DOMContentLoaded', function () {
+
+document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
+    var currentEventId, currentEventUrl;  // To store the event ID and URL globally
     var calendar = new FullCalendar.Calendar(calendarEl, {
-        schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
         initialView: 'dayGridMonth',
         headerToolbar: {
             left: 'prev,next today',
             center: 'title',
             right: 'dayGridMonth,timeGridWeek,timeGridDay'
         },
-        events: calendarEvents.map(event => ({
-            title: event.title,
-            start: event.start_at,
-        })),
-        dateClick: function (info) {
-            // Populate the modal for new event
+        events: calendarEvents,  // Use the events from the backend
+        dateClick: function(info) {
             $('#dueDate').val(info.dateStr);
-            $('#eventModal').modal('show');
+            $('#newEventModal').modal('show');
         },
-        eventClick: function (info) {
+        eventClick: function(info) {
+            info.jsEvent.preventDefault(); 
             var eventObj = info.event;
-            $('#editAssignmentName').val(eventObj.title);
-            $('#editDueDate').val(eventObj.start.toISOString().substring(0, 10));
-            // Populate other fields if necessary
-            $('#editEventModal').modal('show');
+            console.log(eventObj);
+            currentEventId = eventObj.id;
+            currentEventUrl = eventObj.url;
+            // Populate editing modal fields
+            $('#editingEventModal').find('#eventName').val(eventObj.title);
+            $('#editingEventModal').find('#dueDate').val(eventObj.start.toISOString().substring(0, 10));
+            $('#editingEventModal').find('#eventTime').val(eventObj.start.toTimeString().substring(0, 5));
+            $('#editingEventModal').modal('show');
         }
     });
-
     calendar.render();
 
-    // Separate click handler for updating the event
-    $('#updateEvent').on('click', function () {
-        // Ensure eventObj is available here
-        var eventObj = calendar.getEventById($('#eventId').val());
-        if (!eventObj) {
-            console.error('Event not found');
-            return;
-        }
+    $('#newEventForm').on('submit', function(e) {
+        e.preventDefault(); // Prevent default form submission
 
-        var updatedEventData = {
-            event_id: eventObj.id,
-            title: $('#editAssignmentName').val(),
-            start_date: $('#editDueDate').val() + 'T' + ($('#editEventTime').val() || '00:00'), // Adjust as necessary
-
-        };
-
-
-
-
-        $('#editEventModal').modal('hide');
-    });
-
-
-
-    calendar.render();
-
-    // Handle saving new event from the modal
-    $('#saveEvent').on('click', function () {
-        var eventType = $('#eventType').val();
-        var assignmentName = $('#assignmentName').val();
-        var dueDate = $('#dueDate').val();
-        var eventTime = $('#eventTime').val();
-        var eventLocation = $('#eventLocation').val();
-        var eventClass = $('#eventClass').val();
-
+    
         var eventData = {
-            title: assignmentName + ' - ' + eventType,
-            start: dueDate + 'T' + (eventTime || '00:00'), // If time is not provided, default to '00:00'
-            location: eventLocation,
-            className: eventClass
-
+            title: $('#eventName').val(),
+            start: $('#dueDate').val(),
+            url: $('#eventURL').val(),  // Assuming there's a field for URL
+            type: $('#eventType').val() // Example type
         };
-
-        // Ensure all necessary fields are filled
-        if (eventData.title && eventData.start) {
-            calendar.addEvent(eventData);
-            $('#eventModal').modal('hide'); // Close the modal after adding the event
-        } else {
-            alert('Please fill in all required fields.');
+    
+        $.ajax({
+            url: '/frontend-add-event',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(eventData),
+            success: function(response) {
+                console.log('response');
+                if (response.success) {
+                    console.log('response success')
+                    $('#newEventModal').modal('hide');
+                    calendar.addEvent({
+                        title: eventData.title,
+                        start: eventData.start,
+                        url: eventData.url
+                    });
+                    console.log('event added to calendar');
+                    alert('Event added successfully.');
+                    window.location.reload();
+                } else {
+                    alert('Failed to add event: ' + response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                alert('Error adding event: ' + error);
+            }
+        });
+    });
+    
+    // Button click to redirect to the event URL
+    $('#goToEvent').on('click', function() {
+        if(currentEventUrl) {
+            window.open(currentEventUrl, '_blank');
         }
-
     });
 
+    // Button click to delete an event
+    $('#deleteEvent').on('click', function() {
+        console.log('Delete button clicked');
+        if (confirm('Are you sure you want to delete this event?')) {
+            console.log('Confirmed deletion for event ID:', currentEventId);
+            $.ajax({
+                url: '/delete-event',
+                type: 'POST',
+                data: { id: currentEventId },  // Ensure this ID is what you expect
+                success: function(response) {
+                    console.log('Response from server:', response);
+                    if (response.success) {
+                        var event = calendar.getEventById(currentEventId);  // Retrieve the event object
+                        console.log('Found event in calendar:', event);
+                        if (event) {
+                            event.remove();  // Remove the event from FullCalendar
+                            console.log('Event removed from FullCalendar');
+                        }
+                        $('#editingEventModal').modal('hide');
+                        alert('Event deleted successfully.');
+                    } else {
+                        alert('Failed to delete the event. Server message: ' + response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', error);
+                    alert('Error occurred while deleting the event: ' + error);
+                }
+            });
+        } else {
+            console.log('Deletion cancelled by user');
+        }
+    });
+    
+    
 
-    // Handle event type change in the modal
+    $('#saveEvent').on('click', function() {
+        
+    
+        // If an event ID is present, update the existing event.
+        if (currentEventId) {
+            $('#eventModal').modal('hide');
+            
+        } else {
+            var eventData = {
+                title: $('#eventName').val() + ' - ' + $('#eventType').val(),
+                start: $('#dueDate').val() + 'T' + $('#eventTime').val(),
+                location: $('#eventLocation').val(),
+                className: $('#eventClass').val()
+            };
+            // If no current event ID, add a new event to the calendar.
+            calendar.addEvent(eventData);
+            // Close the modal after adding a new event
+            $('#eventModal').modal('hide');
+        }
+    });
+    
+
     $('#eventType').on('change', function () {
         var selectedType = $(this).val();
         $('#dateGroup, #timeGroup, #locationGroup, #classGroup').hide();
@@ -107,19 +157,7 @@ document.addEventListener('DOMContentLoaded', function () {
             $('#timeGroup, #locationGroup').show();
         }
     }).trigger('change');
-
 });
-
-
-// Function to convert Canvas API events to FullCalendar events
-function convertCanvasEventsToFullCalendarEvents(canvasEvents) {
-    return canvasEvents.map(event => {
-        return {
-            title: event['title'],
-            start: event['start_at']
-        };
-    }).filter(event => event.start); // Filter out events without a start date
-}
 
 
 $(document).ready(function() {

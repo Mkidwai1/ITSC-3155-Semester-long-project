@@ -113,6 +113,129 @@ def seed_items():
     db.session.bulk_save_objects(items)
     db.session.commit()
     print("Database seeded with initial items.")
+    
+class Event(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255), nullable=False)
+    start_at = db.Column(db.DateTime, nullable=False)
+    url = db.Column(db.String(255), nullable=False)
+    type = db.Column(db.String(50), nullable=False)
+    is_deleted = db.Column(db.Boolean, default=False, nullable=False) 
+
+    
+    
+def populate_events_db(user_id, course_codes):
+    fetched_events = fetch_canvas_calendar_events(user_id, course_codes)
+    
+
+    # Fetch events from the database and create sets for quick lookup
+    existing_events = get_existing_events()
+    existing_titles = {event.title for event in existing_events}
+    existing_ids = {event.id for event in existing_events}
+    
+    #print("Existing titles in the database:", existing_titles)
+    #print("Existing IDs in the database:", existing_ids)
+
+    for event_data in fetched_events:
+        
+        
+        # Skip the event if it has no start time, its title already exists, or its ID already exists in the database
+        if event_data.get('start_at') is None:
+            #print("Skipping event due to lack of start time:", event_data)
+            continue
+        if event_data.get('id') in existing_ids:
+            #print("Skipping event due to existing ID:", event_data.get('id'))
+            continue
+        if event_data['title'] in existing_titles:
+            #print("Skipping event due to existing title:", event_data['title'])
+            continue
+        
+
+        # Add a genuinely new event, assuming IDs are unique or null and will be assigned by the DB if null
+        #print("Adding a new event:", event_data['title'])
+        add_event(
+            title=event_data['title'],
+            start_at=datetime.strptime(event_data['start_at'], '%Y-%m-%dT%H:%M:%SZ'),
+            url=event_data['url'],
+            type=event_data['type'],
+            event_id=event_data.get('id')
+        )
+
+
+
+def update_event(existing_event, event_data):
+    """Updates the attributes of an existing event."""
+    existing_event.start_at = datetime.strptime(event_data['start_at'], '%Y-%m-%dT%H:%M:%SZ')
+    existing_event.url = event_data['url']
+    existing_event.type = event_data['type']
+    db.session.commit()
+
+def get_existing_events():
+    """Fetch all events from the database."""
+    return Event.query.all()
+
+def add_event(title, start_at, url, type, event_id=None):
+    """
+    Adds a new event to the database. If no event_id is provided,
+    the database will automatically assign one.
+    """
+    try:
+        new_event = Event(id=event_id, title=title, start_at=start_at, url=url, type=type)
+        db.session.add(new_event)
+        db.session.commit()
+        print('Event added with ID:', new_event.id)  # Shows the ID assigned by the database
+        return True,"Event added successfully"
+    except Exception as e:
+        print(f"Error adding event: {e}")
+        db.session.rollback()
+        return False,f"Failed to add event: {str(e)}"
+
+
+
+@app.route('/delete-event', methods=['POST'])
+def delete_event():
+    event_id = request.form.get('id')  # Get the event ID from the form data
+    print(f"Received deletion request for event ID: {event_id}")
+
+    if not event_id:
+        print("No event ID provided in request")
+        return jsonify({'success': False, 'message': 'No event ID provided'})
+
+    event = Event.query.get(event_id)  # Retrieve the event by ID
+    if not event:
+        print(f"No event found with ID: {event_id}")
+        return jsonify({'success': False, 'message': 'Event not found'})
+
+    try:
+        print(event)
+        event.is_deleted =True
+        db.session.commit()
+        
+        print(f"Event with ID {event_id} deleted successfully")
+        return jsonify({'success': True, 'message': 'Event deleted successfully'})
+    except Exception as e:
+        db.session.rollback()
+        print(f"Failed to delete event with ID {event_id}: {e}")
+        return jsonify({'success': False, 'message': 'Failed to delete event', 'error': str(e)})
+
+@app.route('/frontend-add-event', methods=['POST'])
+def frontend_add_event():
+    data = request.get_json()
+    title = data.get('title')
+    start = data.get('start')
+    url = data.get('url', '')  # Assuming URL might not always be provided
+    event_type = data.get('type')
+    print("***************event added**************")
+    try:
+        # Ensure start is a valid ISO format string
+        start_datetime = datetime.fromisoformat(start)
+    except ValueError:
+        return jsonify({'success': False, 'message': 'Invalid date format'})
+
+    # Call add_event and unpack returned values
+    success, message = add_event(title, start_datetime, url, event_type)
+    return jsonify({'success': success, 'message': message})
+
 
 with app.app_context():
     db.create_all()
@@ -209,9 +332,20 @@ def canvas_calendar():
         return redirect(url_for('login'))
 
     course_codes = user.course_codes_list.split(',') if user.course_codes_list else []
-    calendar_events = fetch_canvas_calendar_events(user.id, course_codes)
-    print("Calendar events in route:", calendar_events)  
-    return render_template('canvas_calendar.html', events=calendar_events, user=user)
+    populate_events_db(user.id, course_codes)
+    
+    # Fetching events from the database and formatting for FullCalendar
+    db_events = Event.query.filter_by(is_deleted=False).all()
+    formatted_events = [{
+        'id': str(event.id),
+        'title': event.title,
+        'start': event.start_at.isoformat(),  # Make sure the date is in ISO format
+        'url': event.url,
+        'type': event.type
+    } for event in db_events]
+
+    return render_template('canvas_calendar.html', events=formatted_events, user=user)
+
 import requests
 
 def fetch_canvas_calendar_events(user_id, course_codes):
@@ -271,7 +405,6 @@ def fetch_canvas_calendar_events(user_id, course_codes):
 
         except requests.RequestException as e:
             flash(f'Failed to fetch assignments for course {code}: {str(e)}')
-
     return all_items
 
 
