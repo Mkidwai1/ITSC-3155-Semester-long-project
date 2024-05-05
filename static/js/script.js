@@ -241,3 +241,20 @@ document.querySelectorAll('input[name="theme"]').forEach(input => {
         }
     });
 });
+
+
+function deleteMessage(messageId) {
+    console.log("Emitting delete for message ID:", messageId);  // Debug log
+    if (messageId) {
+        socket.emit('delete_message', { message_id: messageId });
+    } else {
+        console.error("Attempted to delete a message without a valid ID");
+    }
+}
+
+document.getElementById('delete-last-msg').addEventListener('click', function() {
+    socket.emit('delete_last_message');
+    console.log('Request to delete last message sent');
+    window.location.reload();
+});
+

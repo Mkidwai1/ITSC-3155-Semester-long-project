@@ -76,6 +76,17 @@ class UserItem(db.Model):
     
     item = db.relationship('Item', backref='user_items', lazy=True)
 
+class ChatMessage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    message = db.Column(db.String(500))
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # ForeignKey to the User model
+
+    sender = db.relationship('User', backref='messages')  # Define the relationship
+
+    def __repr__(self):
+        return f'<ChatMessage {self.message}>'
+
 class Todo(db.Model):
     assignmentID = db.Column(db.Integer, primary_key=True)
     assignmentName = db.Column(db.String(255))
@@ -156,6 +167,7 @@ def login():
         # Logic to authenticate the user
         user = User.query.filter_by(email=request.form.get('email')).first()
         if user and user.check_password(request.form.get('password')):
+            session['user_id'] = user.id
             session['email'] = user.email
             session['user_name'] = user.name
             session['user_avatar'] = user.avatar if user.avatar else 'pixelBoy.png' # Assuming user.avatar stores the filename
@@ -165,6 +177,7 @@ def login():
         else:
             flash('Invalid Email or Password. Please try again.')
     return render_template('login.html')
+
 @app.route('/settings', methods=['GET', 'POST'])
 def settings():
     if 'email' in session:
@@ -503,13 +516,16 @@ def dashboard():
         flash('Please log in to access the dashboard.')
         return redirect(url_for('login'))
 
-    user = User.query.filter_by(email=session['email']).first()
-    assignments = Todo.query.all()
+    user_id = session.get('user_id')
+    user = User.query.get(user_id)
     if not user:
         flash('User not found.')
         return redirect(url_for('login'))
 
-    return render_template('dashboard.html', user=user, tasks = assignments)
+    # Fetch the last 10 messages
+    messages = ChatMessage.query.order_by(ChatMessage.timestamp.desc()).limit(10).all()
+    return render_template('dashboard.html', user=user, messages=messages)
+
 
 @app.route('/logout')
 def logout():
@@ -569,6 +585,8 @@ def handle_connect():
 def handle_disconnect():
     online_users.remove(request.sid)
     emit('user_count', {'count': len(online_users)}, broadcast=True)
+
+
     
 @app.route('/chat')
 def chat():
@@ -576,16 +594,40 @@ def chat():
         flash('Please log in to access the chat.')
         return redirect(url_for('login'))
 
-    user = User.query.filter_by(email=session['email']).first()
-    if not user:
-        flash('User not found.')
-        return redirect(url_for('login'))
+    user_id = session.get('user_id')
+    user = User.query.get(user_id)
+    messages = ChatMessage.query.order_by(ChatMessage.timestamp.desc()).limit(50).all()  # Get last 50 messages
+    return render_template('chat.html', user=user, messages=messages)
 
-    return render_template('chat.html', user=user)
 
 @socketio.on('message')
 def handle_message(msg):
+    # Assuming the session has the user's id
+    if 'user_id' in session:
+        user_id = session['user_id']
+        new_message = ChatMessage(sender_id=user_id, message=msg)
+        db.session.add(new_message)
+        db.session.commit()
     send(msg, broadcast=True)
+
+@socketio.on('delete_last_message')
+def handle_delete_last_message():
+    if 'user_id' in session:
+        # Query the latest message by this user
+        last_message = ChatMessage.query.filter_by(sender_id=session['user_id']).order_by(ChatMessage.timestamp.desc()).first()
+        if last_message:
+            db.session.delete(last_message)
+            db.session.commit()
+            emit('message_deleted', {'message_id': last_message.id}, broadcast=True)
+            print(f"Deleted last message with ID: {last_message.id}")
+        else:
+            emit('error', {'message': 'No messages found to delete'})
+            print("No messages found to delete")
+    else:
+        emit('error', {'message': 'User not authenticated'})
+        print("User not authenticated")
+
+
 @app.route('/unlock-color-picker', methods=['POST'])
 def unlock_color_picker():
     if 'email' not in session:
